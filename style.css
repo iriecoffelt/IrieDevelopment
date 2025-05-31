@@ -2,10 +2,10 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: 'Montserrat', sans-serif;
-  background: linear-gradient(120deg, #2d3748 0%, #38b2ac 100%);
+  background: linear-gradient(120deg, #23272a 0%, #2c2f36 100%);
   background-size: 200% 200%;
   animation: gradientMove 16s ease-in-out infinite;
-  color: #222;
+  color: #eaeaea;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,20 +23,21 @@ body {
   to { opacity: 1; }
 }
 .container {
-  background: rgba(255, 255, 255, 0.97);
+  background: #2c2f36;
   border-radius: 22px;
-  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.13);
+  box-shadow: 0 8px 32px #0008;
   padding: 56px 32px 40px 32px;
   max-width: 440px;
   text-align: center;
   position: relative;
   overflow: hidden;
+  color: #eaeaea;
 }
 h1 {
   font-family: 'Montserrat', sans-serif;
   font-size: 2.2em;
   margin-bottom: 0.3em;
-  color: #319795;
+  color: #3ddad7;
   letter-spacing: -1px;
   text-shadow: none;
   font-weight: 800;
@@ -48,7 +49,7 @@ h1 {
 }
 .subtitle {
   font-size: 1.13em;
-  color: #4a5568;
+  color: #b8e6e0;
   margin-bottom: 2em;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.01em;
@@ -56,7 +57,7 @@ h1 {
 }
 .about {
   margin-bottom: 2.2em;
-  color: #2d3748;
+  color: #e0e0f0;
   font-size: 1em;
   line-height: 1.7;
   font-weight: 500;
@@ -68,11 +69,11 @@ h1 {
   margin: 2em 0 1.2em 0;
 }
 .app-card {
-  background: #f7fafc;
+  background: #23272a;
   border-radius: 14px;
-  box-shadow: 0 2px 12px #38b2ac22;
+  box-shadow: 0 2px 12px #0008;
   padding: 1.1em 1em 1em 1em;
-  color: #222;
+  color: #eaeaea;
   text-align: left;
   display: flex;
   align-items: center;
@@ -81,13 +82,13 @@ h1 {
   overflow: hidden;
   transition: transform 0.16s cubic-bezier(.68,-0.55,.27,1.55), box-shadow 0.16s, background 0.16s;
   cursor: pointer;
-  border: 1.5px solid #e2e8f0;
+  border: 1.5px solid #3ddad7;
 }
 .app-card:hover {
   transform: translateY(-4px) scale(1.025);
-  box-shadow: 0 8px 32px #38b2ac33;
-  background: #e6fffa;
-  border-color: #38b2ac;
+  box-shadow: 0 8px 32px #3ddad733;
+  background: #2c2f36;
+  border-color: #3ddad7;
 }
 .app-emoji {
   font-size: 2em;
@@ -101,50 +102,77 @@ h1 {
 .app-title {
   font-size: 1.13em;
   font-weight: 700;
-  color: #319795;
+  color: #3ddad7;
   margin-bottom: 0.1em;
 }
 .app-desc {
   font-size: 0.98em;
-  color: #4a5568;
+  color: #b8e6e0;
   font-weight: 500;
 }
 .store-link {
   display: inline-block;
-  margin-top: 2.2em;
-  padding: 0.9em 2.2em;
-  background: #38b2ac;
-  color: #fff;
-  border-radius: 8px;
+  padding: 1em 2.2em;
+  min-height: 48px;
+  border-radius: 10px;
   font-weight: bold;
   text-decoration: none;
   font-family: 'Montserrat', sans-serif;
   font-size: 1.13em;
-  box-shadow: 0 2px 8px #38b2ac22;
+  box-shadow: 0 2px 8px #3ddad722;
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   letter-spacing: 0.01em;
   border: none;
+  box-sizing: border-box;
+  text-align: center;
 }
-.store-link:hover {
-  background: #319795;
-  color: #fff;
-  box-shadow: 0 4px 24px #38b2ac33;
-}
-.main-nav {
+.button-group, .main-nav {
   display: flex;
   flex-direction: column;
-  gap: 1.1em;
+  gap: 1.2em;
   align-items: stretch;
-  margin: 2em 0 1em 0;
+  margin: 2em 0 1.2em 0;
+}
+.store-link.apps {
+  background: #3ddad7;
+  color: #23272a;
+}
+.store-link.apps:hover {
+  background: #289e9b;
+  color: #fff;
+}
+.store-link.shop {
+  background: #289e9b;
+  color: #eaeaea;
+}
+.store-link.shop:hover {
+  background: #3ddad7;
+  color: #23272a;
+}
+.store-link.nav {
+  background: transparent;
+  color: #3ddad7;
+  border: 2px solid #3ddad7;
+}
+.store-link.nav:hover {
+  background: #23272a;
+  color: #fff;
+}
+.button-group .store-link {
+  width: 100%;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .main-nav .store-link {
   width: 100%;
-  margin: 0;
-  box-sizing: border-box;
+  max-width: 340px;
+  margin-left: auto;
+  margin-right: auto;
 }
 @media (max-width: 600px) {
   .container {
-    padding: 18px 2vw 24px 2vw;
+    padding: 18px 6vw 24px 6vw;
     max-width: 98vw;
     border-radius: 12px;
   }
@@ -155,11 +183,11 @@ h1 {
     font-size: 1em;
   }
   .apps {
-    gap: 0.5em;
+    gap: 1em;
     margin: 1.2em 0 0.7em 0;
   }
   .app-card {
-    padding: 0.8em 0.5em 0.7em 0.5em;
+    padding: 1em 1em 1em 1em;
     font-size: 0.98em;
     gap: 0.7em;
   }
@@ -167,12 +195,33 @@ h1 {
     width: 38px !important;
     height: 38px !important;
   }
+  .button-group {
+    gap: 1em;
+    margin: 1.2em 0 0.7em 0;
+  }
+  .button-group .store-link {
+    max-width: 100%;
+  }
   .main-nav {
     margin: 1.2em 0 0.7em 0;
-    gap: 0.7em;
+    gap: 1em;
+  }
+  .main-nav .store-link {
+    max-width: 100%;
   }
   .store-link {
     font-size: 1em;
-    padding: 0.8em 0.5em;
+    padding: 1em 1em;
+  }
+}
+@media (min-width: 800px) {
+  .container {
+    max-width: 700px;
+    padding: 64px 48px 48px 48px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 900px;
   }
 } 
