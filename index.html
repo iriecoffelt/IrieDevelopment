@@ -5,100 +5,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Irie Development | App Developer</title>
   <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700|Montserrat:700,400&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #232526 0%, #414345 100%);
-      color: #f7fafc;
-      font-family: 'Montserrat', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .container {
-      background: rgba(34, 34, 34, 0.95);
-      border-radius: 16px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      padding: 48px 32px;
-      max-width: 420px;
-      text-align: center;
-    }
-    h1 {
-      font-family: 'Fira Mono', monospace;
-      font-size: 2.2em;
-      margin-bottom: 0.3em;
-      color: #00e6d0;
-      letter-spacing: -1px;
-    }
-    .subtitle {
-      font-size: 1.1em;
-      color: #b2f5ea;
-      margin-bottom: 2em;
-      font-family: 'Montserrat', sans-serif;
-    }
-    .apps {
-      margin: 2em 0;
-    }
-    .app-link {
-      display: block;
-      background: #222;
-      color: #00e6d0;
-      text-decoration: none;
-      margin: 0.5em 0;
-      padding: 0.8em 0;
-      border-radius: 8px;
-      font-family: 'Fira Mono', monospace;
-      font-size: 1em;
-      transition: background 0.2s, color 0.2s;
-    }
-    .app-link:hover {
-      background: #00e6d0;
-      color: #222;
-    }
-    .contact-btn {
-      display: inline-block;
-      margin-top: 2em;
-      padding: 0.8em 2em;
-      background: #00e6d0;
-      color: #222;
-      border-radius: 8px;
-      font-weight: bold;
-      text-decoration: none;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1.1em;
-      box-shadow: 0 2px 8px rgba(0,230,208,0.15);
-      transition: background 0.2s, color 0.2s;
-    }
-    .contact-btn:hover {
-      background: #b2f5ea;
-      color: #232526;
-    }
-    @media (max-width: 600px) {
-      .container { padding: 32px 8px; }
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
+  <div class="container fade-in">
     <h1>Irie Development</h1>
     <div class="subtitle">Crafting innovative iOS apps for a connected world.</div>
-    <div style="margin-bottom:2em; color:#b2f5ea; font-size:1em;">
+    <div class="about">
       <strong>About Me:</strong><br>
-      Hi, I'm Irie Coffelt, an independent iOS developer passionate about building engaging and useful apps for iPhone, iPad, and Apple Watch.<br>
-      <br>
-      <strong>Featured Apps:</strong>
-      <ul style="list-style:none; padding:0; margin:1em 0 0 0; color:#00e6d0;">
-        <li>🧩 Sudoku Mindscape <span style="color:#b2f5ea; font-size:0.9em;">(Puzzle)</span></li>
-        <li>🕵️ Hidden Secrets of Arkansas <span style="color:#b2f5ea; font-size:0.9em;">(Travel)</span></li>
-        <li>📝 Oliver's Whiteboard <span style="color:#b2f5ea; font-size:0.9em;">(Education)</span></li>
-      </ul>
+      Hi, I'm Irie Coffelt, an independent iOS developer passionate about building engaging and useful apps for iPhone, iPad, and Apple Watch.
     </div>
     <div class="apps">
-      <a class="app-link" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank">🌐 View All Apps on the App Store</a>
-      <a class="app-link" href="#" target="_blank">🚀 Portfolio</a>
+      <a class="app-card" href="https://apps.apple.com/us/app/sudoku-mindscape/id6745157437" target="_blank">
+        <span style="display:inline-block;vertical-align:middle;position:relative;width:48px;height:48px;overflow:hidden;--app-icon-mask:url('data:image/svg+xml,%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xml%3Aspace%3D%22preserve%22%20viewBox%3D%220%200%20230.5%20230.5%22%3E%0A%20%20%3Cpath%20fill-rule%3D%22evenodd%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%221.4%22%20clip-rule%3D%22evenodd%22%20d%3D%22M158.2%20230H64.1a320%20320%200%200%201-7-.1c-5%200-10-.5-15-1.3a50.8%2050.8%200%200%201-14.4-4.8%2048.2%2048.2%200%200%201-21-21%2050.9%2050.9%200%200%201-4.8-14.4%20100.7%20100.7%200%200%201-1.3-15v-7l-.1-8.2V64.1a320%20320%200%200%201%20.1-7c0-5%20.5-10%201.3-15a50.7%2050.7%200%200%201%204.8-14.4%2048.2%2048.2%200%200%201%2021-21%2051%2051%200%200%201%2014.4-4.8c5-.8%2010-1.2%2015-1.3a320%20320%200%200%201%207%200l8.2-.1h94.1a320%20320%200%200%201%207%20.1c5%200%2010%20.5%2015%201.3a52%2052%200%200%201%2014.4%204.8%2048.2%2048.2%200%200%201%2021%2021%2050.9%2050.9%200%200%201%204.8%2014.4c.8%205%201.2%2010%201.3%2015a320%20320%200%200%201%20.1%207v102.3l-.1%207c0%205-.5%2010-1.3%2015a50.7%2050.7%200%200%201-4.8%2014.4%2048.2%2048.2%200%200%201-21%2021%2050.8%2050.8%200%200%201-14.4%204.8c-5%20.8-10%201.2-15%201.3a320%20320%200%200%201-7%200l-8.2.1z%22%2F%3E%0A%3C%2Fsvg%3E%0A');">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3f/b3/ec/3fb3ecc5-5538-7d1e-8d45-0392756080aa/AppIcon-0-0-1x_U007epad-0-1-85-220.png/540x540bb.jpg" alt="Sudoku Mindscape" style="width:100%;height:100%;object-fit:contain;mask-image:var(--app-icon-mask);-webkit-mask-image:var(--app-icon-mask);" />
+        </span>
+        <span class="app-info">
+          <span class="app-title">Sudoku Mindscape</span>
+          <span class="app-desc">Puzzle</span>
+        </span>
+      </a>
+      <a class="app-card" href="https://apps.apple.com/us/app/hidden-secrets-of-arkansas/id1576165434" target="_blank">
+        <span style="display:inline-block;vertical-align:middle;position:relative;width:48px;height:48px;overflow:hidden;--app-icon-mask:url('data:image/svg+xml,%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xml%3Aspace%3D%22preserve%22%20viewBox%3D%220%200%20230.5%20230.5%22%3E%0A%20%20%3Cpath%20fill-rule%3D%22evenodd%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%221.4%22%20clip-rule%3D%22evenodd%22%20d%3D%22M158.2%20230H64.1a320%20320%200%200%201-7-.1c-5%200-10-.5-15-1.3a50.8%2050.8%200%200%201-14.4-4.8%2048.2%2048.2%200%200%201-21-21%2050.9%2050.9%200%200%201-4.8-14.4%20100.7%20100.7%200%200%201-1.3-15v-7l-.1-8.2V64.1a320%20320%200%200%201%20.1-7c0-5%20.5-10%201.3-15a50.7%2050.7%200%200%201%204.8-14.4%2048.2%2048.2%200%200%201%2021-21%2051%2051%200%200%201%2014.4-4.8c5-.8%2010-1.2%2015-1.3a320%20320%200%200%201%207%200l8.2-.1h94.1a320%20320%200%200%201%207%20.1c5%200%2010%20.5%2015%201.3a52%2052%200%200%201%2014.4%204.8%2048.2%2048.2%200%200%201%2021%2021%2050.9%2050.9%200%200%201%204.8%2014.4c.8%205%201.2%2010%201.3%2015a320%20320%200%200%201%20.1%207v102.3l-.1%207c0%205-.5%2010-1.3%2015a50.7%2050.7%200%200%201-4.8%2014.4%2048.2%2048.2%200%200%201-21%2021%2050.8%2050.8%200%200%201-14.4%204.8c-5%20.8-10%201.2-15%201.3a320%20320%200%200%201-7%200l-8.2.1z%22%2F%3E%0A%3C%2Fsvg%3E%0A');">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ee/db/73/eedb73da-4212-a1ec-c4fd-e3bcd118b15b/AppIcon-0-1x_U007epad-0-7-0-sRGB-85-220-0.png/540x540bb.jpg" alt="Hidden Secrets of Arkansas" style="width:100%;height:100%;object-fit:contain;mask-image:var(--app-icon-mask);-webkit-mask-image:var(--app-icon-mask);" />
+        </span>
+        <span class="app-info">
+          <span class="app-title">Hidden Secrets of Arkansas</span>
+          <span class="app-desc">Travel</span>
+        </span>
+      </a>
+      <a class="app-card" href="https://apps.apple.com/us/app/olivers-whiteboard/idYOUR_APP_ID" target="_blank">
+        <span style="display:inline-block;vertical-align:middle;position:relative;width:48px;height:48px;overflow:hidden;--app-icon-mask:url('data:image/svg+xml,%0A%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xml%3Aspace%3D%22preserve%22%20viewBox%3D%220%200%20230.5%20230.5%22%3E%0A%20%20%3Cpath%20fill-rule%3D%22evenodd%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%221.4%22%20clip-rule%3D%22evenodd%22%20d%3D%22M158.2%20230H64.1a320%20320%200%200%201-7-.1c-5%200-10-.5-15-1.3a50.8%2050.8%200%200%201-14.4-4.8%2048.2%2048.2%200%200%201-21-21%2050.9%2050.9%200%200%201-4.8-14.4%20100.7%20100.7%200%200%201-1.3-15v-7l-.1-8.2V64.1a320%20320%200%200%201%20.1-7c0-5%20.5-10%201.3-15a50.7%2050.7%200%200%201%204.8-14.4%2048.2%2048.2%200%200%201%2021-21%2051%2051%200%200%201%2014.4-4.8c5-.8%2010-1.2%2015-1.3a320%20320%200%200%201%207%200l8.2-.1h94.1a320%20320%200%200%201%207%20.1c5%200%2010%20.5%2015%201.3a52%2052%200%200%201%2014.4%204.8%2048.2%2048.2%200%200%201%2021%2021%2050.9%2050.9%200%200%201%204.8%2014.4c.8%205%201.2%2010%201.3%2015a320%20320%200%200%201%20.1%207v102.3l-.1%207c0%205-.5%2010-1.3%2015a50.7%2050.7%200%200%201-4.8%2014.4%2048.2%2048.2%200%200%201-21%2021%2050.8%2050.8%200%200%201-14.4%204.8c-5%20.8-10%201.2-15%201.3a320%20320%200%200%201-7%200l-8.2.1z%22%2F%3E%0A%3C%2Fsvg%3E%0A');">
+          <img src="https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/3d/37/92/3d3792af-8fc8-7d64-a95d-60d6d616b796/AppIcon-0-1x_U007emarketing-0-7-0-sRGB-85-220.png/540x540bb.jpg" alt="Oliver's Whiteboard" style="width:100%;height:100%;object-fit:contain;mask-image:var(--app-icon-mask);-webkit-mask-image:var(--app-icon-mask);" />
+        </span>
+        <span class="app-info">
+          <span class="app-title">Oliver's Whiteboard</span>
+          <span class="app-desc">Education</span>
+        </span>
+      </a>
     </div>
-    <a class="contact-btn" href="mailto:your@email.com">Contact Me</a>
+    <a class="store-link" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank">🌐 View All Apps on the App Store</a>
   </div>
 </body>
 </html> 
