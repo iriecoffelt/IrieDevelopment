@@ -143,7 +143,36 @@ h1 {
   box-sizing: border-box;
 }
 @media (max-width: 600px) {
-  .container { padding: 32px 6px; }
-  .apps { gap: 0.7em; }
-  .app-card { padding: 1em 0.7em 0.8em 0.7em; }
+  .container {
+    padding: 18px 2vw 24px 2vw;
+    max-width: 98vw;
+    border-radius: 12px;
+  }
+  h1 {
+    font-size: 1.4em;
+  }
+  .subtitle, .about, .app-title, .app-desc {
+    font-size: 1em;
+  }
+  .apps {
+    gap: 0.5em;
+    margin: 1.2em 0 0.7em 0;
+  }
+  .app-card {
+    padding: 0.8em 0.5em 0.7em 0.5em;
+    font-size: 0.98em;
+    gap: 0.7em;
+  }
+  .app-card img {
+    width: 38px !important;
+    height: 38px !important;
+  }
+  .main-nav {
+    margin: 1.2em 0 0.7em 0;
+    gap: 0.7em;
+  }
+  .store-link {
+    font-size: 1em;
+    padding: 0.8em 0.5em;
+  }
 } 
