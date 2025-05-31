@@ -130,6 +130,18 @@ h1 {
   color: #fff;
   box-shadow: 0 4px 24px #38b2ac33;
 }
+.main-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1em;
+  align-items: stretch;
+  margin: 2em 0 1em 0;
+}
+.main-nav .store-link {
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+}
 @media (max-width: 600px) {
   .container { padding: 32px 6px; }
   .apps { gap: 0.7em; }
