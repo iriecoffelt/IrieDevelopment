@@ -58,13 +58,60 @@
     </div>
     <div class="button-group">
       <a class="store-link apps" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank">📲 View All Apps on the App Store</a>
-      <a class="store-link shop" href="https://exploringarkansas.myspreadshop.com" target="_blank">Shop Arkansas Gear For The Family!</a>
+      <button type="button" class="store-link shop" onclick="openStoreModal()">🛍️ Shop Arkansas Gear For The Family!</button>
     </div>
+
+    <!-- Store Modal -->
+    <div id="storeModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Arkansas Gear Store</h3>
+          <button type="button" class="close-btn" onclick="closeStoreModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <iframe 
+            src="https://exploringarkansas.myspreadshop.com" 
+            class="modal-iframe"
+            title="Arkansas Merch Store"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </div>
+
     <nav class="main-nav">
       <a href="pages/privacy_policies/privacy.html" class="store-link nav">Privacy Policies</a>
       <a href="pages/terms_of_service/terms.html" class="store-link nav">Terms of Use</a>
       <a href="https://www.facebook.com/IrieDevelopment/?checkpoint_src=any" class="store-link nav" target="_blank" rel="noopener">Contact</a>
     </nav>
   </div>
+
+  <script>
+    // Store Modal Functions
+    function openStoreModal() {
+      document.getElementById('storeModal').style.display = 'block';
+      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+    }
+
+    function closeStoreModal() {
+      document.getElementById('storeModal').style.display = 'none';
+      document.body.style.overflow = 'auto'; // Restore scrolling
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('storeModal');
+      if (event.target === modal) {
+        closeStoreModal();
+      }
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeStoreModal();
+      }
+    });
+  </script>
 </body>
 </html>
