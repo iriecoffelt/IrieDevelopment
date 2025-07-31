@@ -68,8 +68,15 @@
         
         .button-group {
             display: flex;
+            flex-direction: column;
             gap: 15px;
             margin-top: 30px;
+        }
+        
+        .secondary-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
         
         button {
@@ -163,16 +170,18 @@
         
         /* Subscriber Management */
         .subscriber-management {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
             padding: 20px;
             margin-bottom: 30px;
+            backdrop-filter: blur(20px);
         }
         
         .subscriber-management h3 {
             margin-top: 0;
-            color: #495057;
+            color: #007AFF;
+            font-size: 1.2rem;
         }
         
         .subscriber-list {
@@ -185,16 +194,18 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px;
-            background: white;
-            border: 1px solid #e9ecef;
-            border-radius: 4px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
             margin-bottom: 8px;
+            backdrop-filter: blur(10px);
         }
         
         .subscriber-email {
             font-family: monospace;
-            color: #495057;
+            color: #ffffff;
+            word-break: break-all;
         }
         
         .management-actions {
@@ -206,6 +217,118 @@
         .management-actions .btn {
             flex: 1;
             min-width: 120px;
+        }
+        
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 0;
+                border-radius: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+            
+            .button-group {
+                gap: 10px;
+            }
+            
+            .button-group .send-btn {
+                width: 100%;
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            .secondary-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .secondary-buttons button {
+                width: 100%;
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            input, textarea, select {
+                font-size: 16px; /* Prevents zoom on iOS */
+                padding: 15px;
+            }
+            
+            textarea {
+                min-height: 100px;
+            }
+            
+            .subscriber-management {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .subscriber-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .management-actions {
+                flex-direction: column;
+            }
+            
+            .management-actions .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .template-preview {
+                padding: 15px;
+            }
+            
+            .template-btn {
+                width: 100%;
+                margin: 5px 0;
+                padding: 12px;
+            }
+            
+            .subscriber-count {
+                font-size: 16px;
+                margin-bottom: 15px;
+            }
+            
+            .status {
+                padding: 12px;
+                font-size: 14px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .button-group button {
+                padding: 12px;
+                font-size: 13px;
+            }
+            
+            input, textarea, select {
+                padding: 12px;
+                font-size: 16px;
+            }
         }
         
         /* Status messages */
@@ -361,11 +484,13 @@
             </div>
 
                     <div class="button-group">
-            <button type="submit" class="send-btn">📤 Send Newsletter</button>
-            <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
-            <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
-            <button type="button" class="sync-btn" onclick="syncToGitHub()">🔄 Sync to GitHub</button>
-        </div>
+                <button type="submit" class="send-btn">📤 Send Newsletter</button>
+                <div class="secondary-buttons">
+                    <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
+                    <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
+                    <button type="button" class="sync-btn" onclick="syncToGitHub()">🔄 Sync to GitHub</button>
+                </div>
+            </div>
         </form>
 
         <div id="status" class="status" style="display: none;"></div>
