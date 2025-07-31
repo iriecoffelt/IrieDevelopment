@@ -13,4 +13,18 @@
     <RequireAll>
         Require valid-user
     </RequireAll>
+</Files>
+
+# Protect sensitive files
+<Files ".env">
+    Order deny,allow
+    Deny from all
+</Files>
+
+<Files "github_callback.php">
+    # Allow access only for GitHub OAuth redirects
+    RewriteEngine On
+    RewriteCond %{HTTP_REFERER} !^https://github\.com
+    RewriteCond %{HTTP_REFERER} !^https://iriedevelopment\.com
+    RewriteRule .* - [F]
 </Files> 

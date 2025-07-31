@@ -289,25 +289,32 @@
             display: none;
         }
         
-        /* GitHub Button Styles */
-        .github-btn {
+        /* Token Input Styles */
+        .token-input {
             display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 12px 24px;
-            background: #24292e;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
+            margin: 15px 0;
+            align-items: center;
         }
         
-        .github-btn:hover {
-            background: #2f363d;
-            transform: translateY(-2px);
+        .token-help {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .token-help a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+        
+        .token-help code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
         }
     </style>
 </head>
@@ -319,13 +326,15 @@
         <!-- Admin Login Form -->
         <div id="loginSection" class="admin-login">
             <h3>🔒 Admin Access Required</h3>
-            <p>Sign in with GitHub to access the newsletter system:</p>
-            <button type="button" onclick="loginWithGitHub()" class="github-btn">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                </svg>
-                Sign in with GitHub
-            </button>
+            <p>Enter your GitHub Personal Access Token to access the newsletter system:</p>
+            <div class="token-input">
+                <input type="password" id="githubToken" placeholder="Enter GitHub Personal Access Token" class="admin-input">
+                <button type="button" onclick="verifyGitHubToken()" class="admin-btn">Verify Token</button>
+            </div>
+            <div class="token-help">
+                <p><small>💡 Create a token at: <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings &gt; Developer settings &gt; Personal access tokens</a></small></p>
+                <p><small>🔑 Token needs: <code>read:user</code> scope</small></p>
+            </div>
         </div>
 
         <!-- Newsletter Form (Loaded dynamically after login) -->
@@ -686,26 +695,78 @@ Irie Development`
             sendNewsletter(testSubject, testMessage);
         }
         
-        // GitHub OAuth configuration
+        // GitHub Authentication configuration
         const GITHUB_CONFIG = {
-            clientId: 'Ov23li6lk70P27Fvrcyv',
-            redirectUri: 'https://iriedevelopment.com/send_newsletter.html',
             allowedUsers: ['iriecoffelt']
         };
         
-        // GitHub OAuth login
-        function loginWithGitHub() {
-            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CONFIG.clientId}&redirect_uri=${encodeURIComponent('https://iriedevelopment.com/github_callback.php')}&scope=read:user`;
-            window.location.href = githubAuthUrl;
+        // GitHub Personal Access Token verification
+        async function verifyGitHubToken() {
+            const token = document.getElementById('githubToken').value.trim();
+            
+            if (!token) {
+                alert('❌ Please enter a GitHub Personal Access Token.');
+                return;
+            }
+            
+            try {
+                const response = await fetch('https://api.github.com/user', {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'User-Agent': 'Irie-Development-Newsletter'
+                    }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    console.log('GitHub user:', user);
+                    
+                    if (GITHUB_CONFIG.allowedUsers.includes(user.login)) {
+                        // Authorized user
+                        document.getElementById('loginSection').style.display = 'none';
+                        document.getElementById('newsletterSection').style.display = 'block';
+                        
+                        // Store token securely (sessionStorage for this session only)
+                        sessionStorage.setItem('github_token', token);
+                        sessionStorage.setItem('github_user', user.login);
+                        
+                        // Initialize newsletter system
+                        setTimeout(() => {
+                            loadSubscribers();
+                            
+                            const form = document.getElementById('newsletterForm');
+                            if (form) {
+                                console.log('✅ Newsletter form found, attaching event listener');
+                                form.addEventListener('submit', handleNewsletterSubmit);
+                            } else {
+                                console.error('❌ Newsletter form not found!');
+                            }
+                        }, 100);
+                        
+                        alert(`✅ Welcome, ${user.login}! Access granted.`);
+                    } else {
+                        alert('❌ Access denied. Only authorized users can access this page.');
+                        document.getElementById('githubToken').value = '';
+                    }
+                } else {
+                    alert('❌ Invalid token. Please check your GitHub Personal Access Token.');
+                    document.getElementById('githubToken').value = '';
+                }
+            } catch (error) {
+                console.error('GitHub API error:', error);
+                alert('❌ Error verifying token. Please try again.');
+                document.getElementById('githubToken').value = '';
+            }
         }
         
-        // Check authentication status
+        // Check if user is already authenticated
         function checkGitHubAuth() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const authStatus = urlParams.get('auth');
+            const token = sessionStorage.getItem('github_token');
+            const user = sessionStorage.getItem('github_user');
             
-            if (authStatus === 'success') {
-                // User is authenticated
+            if (token && user && GITHUB_CONFIG.allowedUsers.includes(user)) {
+                // User is already authenticated
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('newsletterSection').style.display = 'block';
                 
@@ -721,15 +782,6 @@ Irie Development`
                         console.error('❌ Newsletter form not found!');
                     }
                 }, 100);
-                
-                // Clean up URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (authStatus === 'denied') {
-                alert('❌ Access denied. Only authorized users can access this page.');
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } else if (authStatus === 'error') {
-                alert('❌ Authentication error. Please try again.');
-                window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
         
