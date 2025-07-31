@@ -360,11 +360,12 @@
                 </select>
             </div>
 
-            <div class="button-group">
-                <button type="submit" class="send-btn">📤 Send Newsletter</button>
-                <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
-                <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
-            </div>
+                    <div class="button-group">
+            <button type="submit" class="send-btn">📤 Send Newsletter</button>
+            <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
+            <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
+            <button type="button" class="sync-btn" onclick="syncToGitHub()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;">🔄 Sync to GitHub</button>
+        </div>
         </form>
 
         <div id="status" class="status" style="display: none;"></div>
@@ -693,6 +694,29 @@ Irie Development`
             console.log('Test message:', testMessage);
             
             sendNewsletter(testSubject, testMessage);
+        }
+
+        // Sync to GitHub function
+        async function syncToGitHub() {
+            const token = sessionStorage.getItem('github_token');
+            if (!token) {
+                alert('❌ No GitHub token found. Please log in again.');
+                return;
+            }
+
+            try {
+                showStatus('info', '🔄 Syncing subscribers to GitHub...');
+                
+                if (typeof newsletterManager !== 'undefined') {
+                    await newsletterManager.syncWithGitHub(token);
+                    showStatus('success', '✅ Successfully synced subscribers to GitHub!');
+                } else {
+                    showStatus('error', '❌ Newsletter manager not available');
+                }
+            } catch (error) {
+                console.error('Sync error:', error);
+                showStatus('error', `❌ Failed to sync to GitHub: ${error.message}`);
+            }
         }
         
         // GitHub Authentication configuration

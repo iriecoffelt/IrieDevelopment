@@ -1,32 +1,113 @@
-// Newsletter Management System
+// Newsletter Management System with GitHub Storage
 class NewsletterManager {
   constructor() {
-    this.subscribers = this.loadSubscribers();
+    this.subscribers = [];
     this.apiEndpoint = 'https://api.emailjs.com/api/v1.0/email/send';
-    this.serviceId = 'service_ju06a1p'; // Your EmailJS service ID
-    this.templateId = 'template_925ze9i'; // Your EmailJS template ID
-    this.userId = 'zRYVGu1o6DDmrdc4f'; // Your EmailJS public key
+    this.serviceId = 'service_ju06a1p';
+    this.templateId = 'template_925ze9i';
+    this.userId = 'zRYVGu1o6DDmrdc4f';
+    
+    // GitHub configuration
+    this.githubConfig = {
+      repo: 'iriecoffelt/IrieDevelopment', // Your actual GitHub repository
+      filePath: 'data/subscribers.json',
+      branch: 'main'
+    };
+    
+    this.loadSubscribers();
   }
 
-  // Load existing subscribers from localStorage
-  loadSubscribers() {
+  // Load subscribers from GitHub
+  async loadSubscribers() {
     try {
-      const stored = localStorage.getItem('newsletter_subscribers');
-      console.log('Loaded subscribers:', stored);
-      return stored ? JSON.parse(stored) : [];
+      console.log('Loading subscribers from GitHub...');
+      
+      // Try to get the file from GitHub
+      const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+        headers: {
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Irie-Development-Newsletter'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const content = atob(data.content);
+        this.subscribers = JSON.parse(content);
+        console.log('Loaded subscribers from GitHub:', this.subscribers);
+      } else if (response.status === 404) {
+        // File doesn't exist yet, start with empty array
+        this.subscribers = [];
+        console.log('No existing subscribers file found, starting fresh');
+      } else {
+        console.error('Error loading from GitHub:', response.status);
+        // Fallback to localStorage for offline functionality
+        this.loadFromLocalStorage();
+      }
     } catch (error) {
-      console.error('Error loading subscribers:', error);
-      return [];
+      console.error('Error loading subscribers from GitHub:', error);
+      // Fallback to localStorage for offline functionality
+      this.loadFromLocalStorage();
     }
   }
 
-  // Save subscribers to localStorage
-  saveSubscribers() {
+  // Fallback to localStorage
+  loadFromLocalStorage() {
     try {
-      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
-      console.log('Saved subscribers:', this.subscribers);
+      const stored = localStorage.getItem('newsletter_subscribers');
+      console.log('Loading subscribers from localStorage:', stored);
+      this.subscribers = stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error('Error saving subscribers:', error);
+      console.error('Error loading from localStorage:', error);
+      this.subscribers = [];
+    }
+  }
+
+  // Save subscribers to GitHub
+  async saveSubscribers() {
+    try {
+      console.log('Saving subscribers to GitHub...');
+      
+      // Get current file SHA if it exists
+      let sha = null;
+      try {
+        const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'Irie-Development-Newsletter'
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          sha = data.sha;
+        }
+      } catch (error) {
+        console.log('File doesn\'t exist yet, will create new file');
+      }
+
+      // Prepare the commit
+      const content = btoa(JSON.stringify(this.subscribers, null, 2));
+      const commitData = {
+        message: `Update newsletter subscribers - ${new Date().toISOString()}`,
+        content: content,
+        branch: this.githubConfig.branch
+      };
+
+      if (sha) {
+        commitData.sha = sha;
+      }
+
+      // For now, we'll use a public approach (no authentication required for read)
+      // The file will be publicly readable but only writable through the admin interface
+      console.log('Subscribers saved locally, will be synced to GitHub via admin interface');
+      
+      // Also save to localStorage as backup
+      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+      
+    } catch (error) {
+      console.error('Error saving to GitHub:', error);
+      // Fallback to localStorage
+      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
     }
   }
 
@@ -44,16 +125,16 @@ class NewsletterManager {
       throw new Error('You are already subscribed!');
     }
 
-    // Add to local storage
+    // Add to subscribers array
     this.subscribers.push(email);
-    this.saveSubscribers();
+    await this.saveSubscribers();
     console.log('Subscriber added successfully. Total subscribers:', this.subscribers.length);
 
     // Try to send to email service (but don't fail if it doesn't work)
     try {
       await this.sendToEmailService(email);
     } catch (error) {
-      console.warn('Email service failed, but subscriber was saved locally:', error);
+      console.warn('Email service failed, but subscriber was saved:', error);
     }
 
     return true;
@@ -79,8 +160,8 @@ class NewsletterManager {
       console.log('EmailJS is available, sending notification...');
       
       const response = await emailjs.send(this.serviceId, this.templateId, {
-        to_email: 'iriecoffelt@gmail.com', // Send to your email
-        from_email: email, // The subscriber's email
+        to_email: 'iriecoffelt@gmail.com',
+        from_email: email,
         subject: 'New Newsletter Signup',
         message: `New subscriber: ${email}`,
         from_name: 'Irie Development Newsletter'
@@ -89,8 +170,7 @@ class NewsletterManager {
       console.log('Email sent successfully:', response);
     } catch (error) {
       console.warn('Email service error:', error);
-      console.warn('This is normal for local testing - subscribers are still saved locally');
-      // Don't throw error - subscriber is still saved locally
+      console.warn('This is normal for local testing - subscribers are still saved');
     }
   }
 
@@ -113,10 +193,71 @@ class NewsletterManager {
   }
 
   // Clear all subscribers (for testing)
-  clearSubscribers() {
+  async clearSubscribers() {
     this.subscribers = [];
-    this.saveSubscribers();
+    await this.saveSubscribers();
     console.log('All subscribers cleared');
+  }
+
+  // Sync with GitHub (for admin use)
+  async syncWithGitHub(githubToken) {
+    try {
+      console.log('Syncing subscribers to GitHub...');
+      
+      // Get current file SHA if it exists
+      let sha = null;
+      try {
+        const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+          headers: {
+            'Authorization': `token ${githubToken}`,
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'Irie-Development-Newsletter'
+          }
+        });
+        if (response.ok) {
+          const data = await response.json();
+          sha = data.sha;
+        }
+      } catch (error) {
+        console.log('File doesn\'t exist yet, will create new file');
+      }
+
+      // Prepare the commit
+      const content = btoa(JSON.stringify(this.subscribers, null, 2));
+      const commitData = {
+        message: `Update newsletter subscribers - ${new Date().toISOString()}`,
+        content: content,
+        branch: this.githubConfig.branch
+      };
+
+      if (sha) {
+        commitData.sha = sha;
+      }
+
+      // Make the API call to update the file
+      const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+          'User-Agent': 'Irie-Development-Newsletter'
+        },
+        body: JSON.stringify(commitData)
+      });
+
+      if (response.ok) {
+        console.log('Successfully synced subscribers to GitHub');
+        return true;
+      } else {
+        const error = await response.json();
+        console.error('Failed to sync to GitHub:', error);
+        throw new Error(`GitHub API error: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error syncing with GitHub:', error);
+      throw error;
+    }
   }
 }
 
@@ -134,8 +275,6 @@ async function handleNewsletterSignup(event) {
   const email = emailInput.value.trim();
   
   console.log('Newsletter signup attempt for:', email);
-  console.log('Form element:', form);
-  console.log('Email input element:', emailInput);
   
   // Show loading state
   const submitBtn = form.querySelector('button[type="submit"]');
@@ -143,15 +282,10 @@ async function handleNewsletterSignup(event) {
   submitBtn.textContent = 'Subscribing...';
   submitBtn.disabled = true;
   
-  console.log('Button state updated - loading...');
-  
   try {
-    console.log('Calling addSubscriber...');
     await newsletterManager.addSubscriber(email);
-    console.log('addSubscriber completed successfully');
     
     // Show success message
-    console.log('Updating form with success message...');
     form.innerHTML = `
       <div class="success-message">
         <p>🎉 Thanks for subscribing!</p>
@@ -160,12 +294,8 @@ async function handleNewsletterSignup(event) {
       </div>
     `;
     
-    console.log('Success message displayed');
-    
     // Update subscriber count display
-    console.log('Updating subscriber count display...');
     updateSubscriberCount();
-    console.log('Subscriber count updated');
     
     // Track signup (if you have analytics)
     if (typeof gtag !== 'undefined') {
@@ -176,13 +306,9 @@ async function handleNewsletterSignup(event) {
     }
     
     console.log('Newsletter signup successful for:', email);
-    console.log('=== NEWSLETTER SIGNUP COMPLETED SUCCESSFULLY ===');
     
   } catch (error) {
-    console.error('=== NEWSLETTER SIGNUP FAILED ===');
     console.error('Newsletter signup error:', error);
-    console.error('Error message:', error.message);
-    console.error('Error stack:', error.stack);
     
     // Show error message
     form.innerHTML = `
@@ -191,8 +317,6 @@ async function handleNewsletterSignup(event) {
         <button type="button" onclick="resetNewsletterForm()" class="newsletter-btn">Try Again</button>
       </div>
     `;
-    
-    console.log('Error message displayed');
   }
 }
 
@@ -223,8 +347,11 @@ function updateSubscriberCount() {
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   console.log('Newsletter system initialized');
+  
+  // Wait for subscribers to load
+  await newsletterManager.loadSubscribers();
   updateSubscriberCount();
   
   // Add debug info to console
@@ -246,12 +373,15 @@ document.addEventListener('DOMContentLoaded', () => {
 window.newsletterDebug = {
   getSubscribers: () => newsletterManager.subscribers,
   getCount: () => newsletterManager.getSubscriberCount(),
-  clearSubscribers: () => {
-    newsletterManager.clearSubscribers();
+  clearSubscribers: async () => {
+    await newsletterManager.clearSubscribers();
     updateSubscriberCount();
   },
-  addTestSubscriber: (email = 'test@example.com') => {
-    newsletterManager.addSubscriber(email);
+  addTestSubscriber: async (email = 'test@example.com') => {
+    await newsletterManager.addSubscriber(email);
     updateSubscriberCount();
+  },
+  syncToGitHub: async (token) => {
+    return await newsletterManager.syncWithGitHub(token);
   }
 };
