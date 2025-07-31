@@ -526,6 +526,7 @@
                     <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
                     <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
                     <button type="button" class="sync-btn" onclick="syncToGitHub()">🔄 Sync to GitHub</button>
+                    <button type="button" class="test-btn" onclick="testGitHubAPI()" style="background: #6f42c1;">🔍 Test GitHub API</button>
                 </div>
             </div>
         </form>
@@ -856,6 +857,18 @@ Irie Development`
             console.log('Test message:', testMessage);
             
             sendNewsletter(testSubject, testMessage);
+        }
+
+        // Test GitHub API function
+        function testGitHubAPI() {
+            const token = sessionStorage.getItem('github_token');
+            if (!token) {
+                alert('❌ No GitHub token found. Please log in again.');
+                return;
+            }
+            
+            console.log('=== TESTING GITHUB API ===');
+            newsletterDebug.testGitHubAPI(token);
         }
 
         // Sync to GitHub function

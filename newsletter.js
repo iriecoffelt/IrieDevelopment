@@ -409,5 +409,48 @@ window.newsletterDebug = {
   },
   syncToGitHub: async (token) => {
     return await newsletterManager.syncWithGitHub(token);
+  },
+  testGitHubAPI: async (token) => {
+    console.log('Testing GitHub API access...');
+    try {
+      // Test 1: Get user info
+      const userResponse = await fetch('https://api.github.com/user', {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Irie-Development-Newsletter'
+        }
+      });
+      console.log('User API status:', userResponse.status);
+      
+      // Test 2: Get repository info
+      const repoResponse = await fetch('https://api.github.com/repos/iriecoffelt/IrieDevelopment', {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Irie-Development-Newsletter'
+        }
+      });
+      console.log('Repo API status:', repoResponse.status);
+      
+      // Test 3: Get file info
+      const fileResponse = await fetch('https://api.github.com/repos/iriecoffelt/IrieDevelopment/contents/data/subscribers.json', {
+        headers: {
+          'Authorization': `token ${token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Irie-Development-Newsletter'
+        }
+      });
+      console.log('File API status:', fileResponse.status);
+      
+      if (fileResponse.ok) {
+        const fileData = await fileResponse.json();
+        console.log('File SHA:', fileData.sha);
+        console.log('File content (base64):', fileData.content);
+      }
+      
+    } catch (error) {
+      console.error('GitHub API test error:', error);
+    }
   }
 };
