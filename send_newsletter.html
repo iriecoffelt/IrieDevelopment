@@ -883,8 +883,13 @@ Irie Development`
                 showStatus('info', '🔄 Syncing subscribers to GitHub...');
                 
                 if (typeof newsletterManager !== 'undefined') {
-                    await newsletterManager.syncWithGitHub(token);
-                    showStatus('success', '✅ Successfully synced subscribers to GitHub!');
+                    const result = await newsletterManager.syncWithGitHub(token);
+                    
+                    if (result.manualUpload) {
+                        showStatus('success', `✅ ${result.message}\n\n📁 A file has been downloaded. Please:\n1. Go to your GitHub repository\n2. Navigate to the data/ folder\n3. Upload the downloaded subscribers.json file\n4. Commit the changes`);
+                    } else {
+                        showStatus('success', '✅ Successfully synced subscribers to GitHub!');
+                    }
                 } else {
                     showStatus('error', '❌ Newsletter manager not available');
                 }
