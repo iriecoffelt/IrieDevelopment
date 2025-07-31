@@ -22,6 +22,8 @@
             padding: 30px;
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            box-sizing: border-box;
         }
         
         h1 {
@@ -53,6 +55,9 @@
             color: #ffffff;
             font-size: 16px;
             box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
         }
         
         input:focus, textarea:focus, select:focus {
@@ -87,6 +92,11 @@
             font-size: 16px;
             cursor: pointer;
             transition: all 0.3s ease;
+            min-height: 44px; /* Better touch target */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         
         .send-btn {
@@ -222,13 +232,15 @@
         /* Mobile Responsive Styles */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 5px;
             }
             
             .container {
-                padding: 20px;
+                padding: 15px;
                 margin: 0;
                 border-radius: 15px;
+                width: 100%;
+                max-width: 100%;
             }
             
             h1 {
@@ -273,6 +285,7 @@
             .subscriber-management {
                 padding: 15px;
                 margin-bottom: 20px;
+                width: 100%;
             }
             
             .subscriber-item {
@@ -312,15 +325,27 @@
         }
         
         @media (max-width: 480px) {
+            body {
+                padding: 2px;
+            }
+            
             .container {
-                padding: 15px;
+                padding: 10px;
+                margin: 0;
+                border-radius: 10px;
             }
             
             h1 {
                 font-size: 1.5rem;
+                margin-bottom: 15px;
             }
             
-            .button-group button {
+            .button-group .send-btn {
+                padding: 15px;
+                font-size: 14px;
+            }
+            
+            .secondary-buttons button {
                 padding: 12px;
                 font-size: 13px;
             }
@@ -328,6 +353,18 @@
             input, textarea, select {
                 padding: 12px;
                 font-size: 16px;
+            }
+            
+            .subscriber-count {
+                font-size: 14px;
+            }
+            
+            .template-preview {
+                padding: 10px;
+            }
+            
+            .subscriber-management {
+                padding: 10px;
             }
         }
         
