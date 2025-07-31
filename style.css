@@ -1,6 +1,21 @@
 /* Modern iOS-inspired design with cool visuals */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
+/* Utility classes for common spacing and styling */
+.margin-top-large {
+  margin-top: 2.5em;
+}
+
+.sync-btn {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.sync-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
 :root {
   --primary: #007AFF;
   --secondary: #5856D6;
