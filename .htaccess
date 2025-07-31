@@ -1,0 +1,16 @@
+# Protect send_newsletter.html with password
+<Files "send_newsletter.html">
+    AuthType Basic
+    AuthName "Admin Access Required"
+    AuthUserFile /path/to/.htpasswd
+    Require valid-user
+</Files>
+
+# Optional: Hide the file from directory listings
+<Files "send_newsletter.html">
+    Order allow,deny
+    Deny from all
+    <RequireAll>
+        Require valid-user
+    </RequireAll>
+</Files> 

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Newsletter - Irie Development</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 50%, #FF2D92 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #007AFF;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #007AFF;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .send-btn {
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            color: white;
+        }
+        
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+        }
+        
+        .export-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .export-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        
+        .success {
+            background: rgba(52, 199, 89, 0.2);
+            color: #34C759;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+        
+        .error {
+            background: rgba(255, 59, 48, 0.2);
+            color: #FF3B30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+        
+        .info {
+            background: rgba(0, 122, 255, 0.2);
+            color: #007AFF;
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+        
+        .subscriber-count {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #8E8E93;
+        }
+        
+        .template-preview {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-title {
+            font-weight: 600;
+            color: #007AFF;
+            margin-bottom: 10px;
+        }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        
+        /* Subscriber Management */
+        .subscriber-management {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .subscriber-management h3 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .subscriber-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .subscriber-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        
+        .subscriber-email {
+            font-family: monospace;
+            color: #495057;
+        }
+        
+        .management-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .management-actions .btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        /* Status messages */
+        .status {
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Button styles for inline replacements */
+        .test-btn {
+            background: #28a745;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .template-btn {
+            margin: 5px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        
+        .template-btn-welcome {
+            background: rgba(0, 122, 255, 0.2);
+            color: #007AFF;
+            border: 1px solid rgba(0, 122, 255, 0.3);
+        }
+        
+        .template-btn-newsletter {
+            background: rgba(255, 149, 0, 0.2);
+            color: #FF9500;
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+        
+        /* Admin Login Styles */
+        .admin-login {
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .admin-input {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+        
+        .admin-btn {
+            padding: 10px 20px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .newsletter-content {
+            display: none;
+        }
+        
+        /* GitHub Button Styles */
+        .github-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #24292e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .github-btn:hover {
+            background: #2f363d;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📧 Send Newsletter</h1>
+        <p>Send newsletters to your subscribers</p>
+
+        <!-- Admin Login Form -->
+        <div id="loginSection" class="admin-login">
+            <h3>🔒 Admin Access Required</h3>
+            <p>Sign in with GitHub to access the newsletter system:</p>
+            <button type="button" onclick="loginWithGitHub()" class="github-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                </svg>
+                Sign in with GitHub
+            </button>
+        </div>
+
+        <!-- Newsletter Form (Loaded dynamically after login) -->
+        <div id="newsletterSection" class="newsletter-content" style="display: none;">
+        <div class="subscriber-count">
+            Total Subscribers: <span id="subscriberCount">0</span>
+        </div>
+        <form id="newsletterForm">
+            <div class="form-group">
+                <label for="subject">Subject Line:</label>
+                <input type="text" id="subject" required placeholder="Enter email subject...">
+            </div>
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" required placeholder="Enter your newsletter message..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="template">Email Template:</label>
+                <select id="template">
+                    <option value="signup_notification">Signup Notification (template_925ze9i)</option>
+                    <option value="newsletter">Newsletter (template_nbpsdhd)</option>
+                    <option value="custom">Custom Template</option>
+                </select>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="send-btn">📤 Send Newsletter</button>
+                <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
+                <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
+            </div>
+        </form>
+
+        <div id="status" class="status" style="display: none;"></div>
+
+        <div class="template-preview">
+            <div class="preview-title">📝 Quick Templates:</div>
+            <button type="button" class="template-btn template-btn-welcome" onclick="loadTemplate('signup_notification')">Welcome Email</button>
+            <button type="button" class="template-btn template-btn-newsletter" onclick="loadTemplate('newsletter')">Newsletter</button>
+        </div>
+        <!-- Subscriber Management -->
+        <div class="subscriber-management">
+            <h3>📋 Manage Subscribers</h3>
+            <div class="subscriber-list">
+                <div id="subscriberList">Loading subscribers...</div>
+            </div>
+            <div class="management-actions">
+                <button type="button" onclick="exportSubscribers()" class="btn btn-secondary">📥 Export Subscribers</button>
+                <button type="button" onclick="clearAllSubscribers()" class="btn btn-danger">🗑️ Clear All</button>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="newsletter.js"></script>
+    <script>
+        // EmailJS configuration
+        const EMAILJS_CONFIG = {
+            serviceId: 'service_ju06a1p',
+            templateId: 'template_925ze9i', // Current template for signup notifications
+            newsletterTemplateId: 'template_nbpsdhd', // Newsletter template
+            userId: 'zRYVGu1o6DDmrdc4f'
+        };
+
+        // Update subscriber count
+        function updateSubscriberCount(count) {
+            const subscriberCountElement = document.getElementById('subscriberCount');
+            if (subscriberCountElement) {
+                subscriberCountElement.textContent = count;
+            }
+        }
+        
+        // Load subscribers from localStorage
+        function loadSubscribers() {
+            // Use the NewsletterManager from newsletter.js if available
+            if (typeof newsletterManager !== 'undefined') {
+                const subscribers = newsletterManager.subscribers;
+                console.log('Loading subscribers from NewsletterManager:', subscribers);
+                displaySubscribers(subscribers);
+                updateSubscriberCount(subscribers.length);
+            } else {
+                // Fallback to direct localStorage access
+                const subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+                console.log('Loading subscribers from localStorage:', subscribers);
+                displaySubscribers(subscribers);
+                updateSubscriberCount(subscribers.length);
+            }
+        }
+        
+        // Display subscribers with remove buttons
+        function displaySubscribers(subscribers) {
+            const subscriberList = document.getElementById('subscriberList');
+            console.log('Displaying subscribers:', subscribers);
+            console.log('Subscriber list element:', subscriberList);
+            
+            if (!subscriberList) {
+                console.error('Subscriber list element not found!');
+                return;
+            }
+            
+            if (subscribers.length === 0) {
+                subscriberList.innerHTML = '<p>No subscribers yet.</p>';
+                return;
+            }
+            
+            const subscriberHtml = subscribers.map((email, index) => `
+                <div class="subscriber-item">
+                    <span class="subscriber-email">${email}</span>
+                    <button type="button" onclick="removeSubscriber(${index})" class="btn btn-small btn-danger">🗑️ Remove</button>
+                </div>
+            `).join('');
+            
+            subscriberList.innerHTML = subscriberHtml;
+        }
+        
+        // Remove individual subscriber
+        function removeSubscriber(index) {
+            let subscribers;
+            if (typeof newsletterManager !== 'undefined') {
+                subscribers = newsletterManager.subscribers;
+            } else {
+                subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+            }
+            
+            if (index >= 0 && index < subscribers.length) {
+                const removedEmail = subscribers[index];
+                subscribers.splice(index, 1);
+                
+                // Update both NewsletterManager and localStorage
+                if (typeof newsletterManager !== 'undefined') {
+                    newsletterManager.saveSubscribers(subscribers);
+                } else {
+                    localStorage.setItem('newsletterSubscribers', JSON.stringify(subscribers));
+                }
+                
+                displaySubscribers(subscribers);
+                updateSubscriberCount(subscribers.length);
+                
+                alert(`Removed: ${removedEmail}`);
+            }
+        }
+        
+        // Clear all subscribers
+        function clearAllSubscribers() {
+            if (confirm('Are you sure you want to remove ALL subscribers? This cannot be undone.')) {
+                if (typeof newsletterManager !== 'undefined') {
+                    newsletterManager.clearSubscribers();
+                } else {
+                    localStorage.removeItem('newsletterSubscribers');
+                }
+                displaySubscribers([]);
+                updateSubscriberCount(0);
+                alert('All subscribers have been removed.');
+            }
+        }
+        
+        // Export subscribers
+        function exportSubscribers() {
+            let subscribers;
+            if (typeof newsletterManager !== 'undefined') {
+                subscribers = newsletterManager.subscribers;
+            } else {
+                subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+            }
+            
+            if (subscribers.length === 0) {
+                alert('No subscribers to export.');
+                return;
+            }
+            
+            const csvContent = 'data:text/csv;charset=utf-8,' + 
+                'Email\n' + 
+                subscribers.join('\n');
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', 'newsletter_subscribers.csv');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            alert(`Exported ${subscribers.length} subscribers to CSV file.`);
+        }
+
+        // Load template
+        function loadTemplate(type) {
+            const templates = {
+                signup_notification: {
+                    subject: 'Welcome to Irie Development!',
+                    message: `Hi there! 👋
+
+Welcome to Irie Development! You're now subscribed to our newsletter.
+
+We'll keep you updated with:
+• New iOS app releases
+• Arkansas travel tips
+• Exclusive merchandise launches
+• App updates and features
+
+Thanks for joining our community!
+
+Best regards,
+Irie Development`
+                },
+                newsletter: {
+                    subject: '📱 Latest from Irie Development',
+                    message: `Hi there! 👋
+
+Here's what's new from Irie Development:
+
+📱 App Updates:
+• Sudoku Mindscape - New puzzle types and improved UI
+• Hidden Secrets of Arkansas - Added 10 new locations
+• Oliver's Whiteboard - Enhanced drawing tools
+
+🛍️ Arkansas Gear:
+• New Arkansas Natural State T-shirts
+• New Arkansas Natural State Hoodies
+• New Arkansas Natural State Stickers
+• New Arkansas Natural State Mugs
+• New Arkansas Natural State Posters
+• New Arkansas Natural State Stickers
+• New Arkansas Natural State Mugs
+• New Arkansas Natural State Posters
+
+Thanks for being part of our community!
+
+Best regards,
+Irie Development`
+                }
+            };
+
+            if (templates[type]) {
+                document.getElementById('subject').value = templates[type].subject;
+                document.getElementById('message').value = templates[type].message;
+            }
+        }
+
+        // Send newsletter
+        async function sendNewsletter(subject, message) {
+            console.log('=== STARTING NEWSLETTER SEND ===');
+            console.log('Subject:', subject);
+            console.log('Message:', message);
+            
+            // Get subscribers from NewsletterManager if available, otherwise from localStorage
+            let subscribers;
+            if (typeof newsletterManager !== 'undefined') {
+                subscribers = newsletterManager.subscribers;
+                console.log('Using subscribers from NewsletterManager:', subscribers);
+            } else {
+                subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+                console.log('Using subscribers from localStorage:', subscribers);
+            }
+            
+            console.log('Subscribers to send to:', subscribers);
+            
+            let successCount = 0;
+            let errorCount = 0;
+
+            showStatus('info', `📤 Sending newsletter to ${subscribers.length} subscribers...`);
+
+            // Option 1: Use newsletter template (recommended)
+            const templateId = EMAILJS_CONFIG.newsletterTemplateId || EMAILJS_CONFIG.templateId;
+            console.log('Using template ID:', templateId);
+            console.log('EmailJS config:', EMAILJS_CONFIG);
+            
+            for (const email of subscribers) {
+                console.log(`Attempting to send to: ${email}`);
+                try {
+                    const emailParams = {
+                        to_email: email,
+                        from_email: 'newsletter@iriedevelopment.com',
+                        subject: subject,
+                        message: message,
+                        from_name: 'Irie Development Newsletter System'
+                    };
+                    console.log('Email parameters:', emailParams);
+                    
+                    const result = await emailjs.send(EMAILJS_CONFIG.serviceId, templateId, emailParams, EMAILJS_CONFIG.userId);
+                    console.log('EmailJS result:', result);
+                    successCount++;
+                    console.log(`✅ Successfully sent to ${email}`);
+                    
+                    // Add delay to avoid rate limiting
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                } catch (error) {
+                    console.error(`❌ Failed to send newsletter to ${email}:`, error);
+                    console.error('Error details:', error.text || error.message);
+                    errorCount++;
+                }
+            }
+
+            console.log(`=== NEWSLETTER SEND COMPLETE ===`);
+            console.log(`Success: ${successCount}, Errors: ${errorCount}`);
+
+            if (successCount > 0) {
+                showStatus('success', `✅ Newsletter sent to ${successCount} subscribers. ${errorCount} failed.`);
+            } else {
+                showStatus('error', `❌ Failed to send newsletter to any subscribers.`);
+            }
+        }
+
+        // Show status message
+        function showStatus(type, message) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            statusDiv.style.display = 'block';
+        }
+
+        // Handle form submission
+        async function handleNewsletterSubmit(e) {
+            console.log('=== FORM SUBMISSION STARTED ===');
+            e.preventDefault();
+            
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            console.log('Form data - Subject:', subject);
+            console.log('Form data - Message:', message);
+            
+            if (!subject || !message) {
+                console.log('❌ Form validation failed - missing subject or message');
+                showStatus('error', '❌ Please fill in both subject and message.');
+                return;
+            }
+            
+            // Get subscriber count from NewsletterManager if available, otherwise from localStorage
+            let subscriberCount;
+            if (typeof newsletterManager !== 'undefined') {
+                subscriberCount = newsletterManager.subscribers.length;
+                console.log('Subscriber count from NewsletterManager:', subscriberCount);
+            } else {
+                subscriberCount = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]').length;
+                console.log('Subscriber count from localStorage:', subscriberCount);
+            }
+            
+            if (subscriberCount === 0) {
+                console.log('❌ No subscribers found');
+                showStatus('error', '❌ No subscribers found. Add some subscribers first.');
+                return;
+            }
+            
+            console.log('✅ Form validation passed, calling sendNewsletter...');
+            await sendNewsletter(subject, message);
+        }
+
+        // Test newsletter function
+        function testNewsletter() {
+            console.log('=== TEST NEWSLETTER BUTTON CLICKED ===');
+            const testSubject = 'Test Newsletter - ' + new Date().toLocaleString();
+            const testMessage = 'This is a test newsletter to check if EmailJS is working properly.';
+            
+            console.log('Test subject:', testSubject);
+            console.log('Test message:', testMessage);
+            
+            sendNewsletter(testSubject, testMessage);
+        }
+        
+        // GitHub OAuth configuration
+        const GITHUB_CONFIG = {
+            clientId: 'Ov23li6lk70P27Fvrcyv',
+            redirectUri: 'https://iriedevelopment.com/send_newsletter.html',
+            allowedUsers: ['iriecoffelt']
+        };
+        
+        // GitHub OAuth login
+        function loginWithGitHub() {
+            const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CONFIG.clientId}&redirect_uri=${encodeURIComponent('https://iriedevelopment.com/github_callback.php')}&scope=read:user`;
+            window.location.href = githubAuthUrl;
+        }
+        
+        // Check authentication status
+        function checkGitHubAuth() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const authStatus = urlParams.get('auth');
+            
+            if (authStatus === 'success') {
+                // User is authenticated
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('newsletterSection').style.display = 'block';
+                
+                // Initialize newsletter system
+                setTimeout(() => {
+                    loadSubscribers();
+                    
+                    const form = document.getElementById('newsletterForm');
+                    if (form) {
+                        console.log('✅ Newsletter form found, attaching event listener');
+                        form.addEventListener('submit', handleNewsletterSubmit);
+                    } else {
+                        console.error('❌ Newsletter form not found!');
+                    }
+                }, 100);
+                
+                // Clean up URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (authStatus === 'denied') {
+                alert('❌ Access denied. Only authorized users can access this page.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (authStatus === 'error') {
+                alert('❌ Authentication error. Please try again.');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('=== DOM CONTENT LOADED ===');
+            // Check for GitHub OAuth callback
+            checkGitHubAuth();
+        });
+    </script>
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        emailjs.init('zRYVGu1o6DDmrdc4f');
+    </script>
+</body>
+</html> 

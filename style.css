@@ -564,4 +564,240 @@ h1 {
     width: 35px;
     height: 35px;
   }
+}
+
+/* Newsletter Section */
+.newsletter-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin: 3rem 0;
+  text-align: center;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+  animation: slideInUp 0.8s ease-out 0.7s both;
+}
+
+.newsletter-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: shimmer 4s infinite;
+}
+
+.newsletter-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.newsletter-subtitle {
+  color: var(--text-secondary);
+  font-size: 1em;
+  margin-bottom: 2rem;
+  font-weight: 400;
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 1rem;
+  max-width: 400px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.newsletter-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  font-size: 1em;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.newsletter-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.newsletter-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+.newsletter-btn {
+  padding: 1rem 2rem;
+  background: var(--accent-gradient);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.newsletter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+}
+
+.success-message {
+  color: var(--success);
+  font-weight: 600;
+  font-size: 1.1em;
+  margin: 0;
+}
+
+.error-message {
+  color: var(--danger);
+  font-weight: 600;
+  font-size: 1.1em;
+  margin: 0;
+}
+
+.subscriber-count {
+  margin-top: 1rem;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.subscriber-count span {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* Social Proof */
+.social-proof {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 3rem 0;
+  flex-wrap: wrap;
+  animation: slideInUp 0.8s ease-out 0.9s both;
+}
+
+.proof-item {
+  text-align: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.proof-item:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 30px rgba(0, 122, 255, 0.2);
+}
+
+.proof-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.proof-label {
+  display: block;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive design for new elements */
+@media (max-width: 768px) {
+  .newsletter-section {
+    padding: 2rem 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .newsletter-title {
+    font-size: 1.5rem;
+  }
+  
+  .newsletter-form {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .newsletter-input {
+    min-width: 100%;
+    max-width: 300px;
+  }
+  
+  .social-proof {
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  
+  .proof-item {
+    padding: 1rem 1.5rem;
+    min-width: 100px;
+  }
+  
+  .proof-number {
+    font-size: 1.5rem;
+  }
+  
+  .proof-label {
+    font-size: 0.8em;
+  }
+}
+
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .modal,
+  .newsletter-section,
+  .social-proof,
+  .button-group {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .container {
+    max-width: none !important;
+    padding: 0 !important;
+  }
 } 

@@ -8,8 +8,81 @@
   <meta name="theme-color" content="#007AFF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <!-- SEO Meta Tags -->
+  <meta name="keywords" content="iOS developer, iPhone apps, iPad apps, Apple Watch apps, Arkansas apps, Sudoku Mindscape, Hidden Secrets of Arkansas, mobile app development, iOS programming">
+  <meta name="author" content="Irie Development">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://iriedevelopment.com/">
+  <meta property="og:title" content="Irie Development | iOS App Developer & Arkansas Apps">
+  <meta property="og:description" content="Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!">
+  <meta property="og:image" content="https://iriedevelopment.com/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Irie Development">
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://iriedevelopment.com/">
+  <meta property="twitter:title" content="Irie Development | iOS App Developer & Arkansas Apps">
+  <meta property="twitter:description" content="Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!">
+  <meta property="twitter:image" content="https://iriedevelopment.com/twitter-image.jpg">
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://apps.apple.com">
+  <link rel="preconnect" href="https://exploringarkansas.myspreadshop.com">
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700|Montserrat:700,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="newsletter.js"></script>
+
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+      emailjs.init('zRYVGu1o6DDmrdc4f');
+  </script>
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Irie Development",
+    "description": "Independent iOS developer creating innovative apps for iPhone, iPad, and Apple Watch",
+    "url": "https://iriedevelopment.com",
+    "sameAs": [
+      "https://apps.apple.com/us/developer/irie-coffelt/id1228289281"
+    ],
+    "knowsAbout": ["iOS Development", "Mobile App Development", "Swift Programming", "Arkansas Tourism"],
+    "hasOccupation": {
+      "@type": "Occupation",
+      "name": "iOS Developer",
+      "description": "Mobile app developer specializing in iOS applications"
+    }
+  }
+  </script>
+  <!-- App Store Links Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Sudoku Mindscape",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "iOS",
+    "offers": {
+      "@type": "Offer",
+      "url": "https://apps.apple.com/us/app/sudoku-mindscape/id6745157437"
+    }
+  }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -59,6 +132,19 @@
     <div class="button-group">
       <a class="store-link apps" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank">📲 View All Apps on the App Store</a>
       <button type="button" class="store-link shop" onclick="openStoreModal()">🛍️ Shop Arkansas Gear For The Family!</button>
+    </div>
+
+    <!-- Newsletter Signup -->
+    <div class="newsletter-section">
+      <h3 class="newsletter-title">Stay Updated</h3>
+      <p class="newsletter-subtitle">Get notified about new apps and exclusive Arkansas merch!</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="Enter your email" required class="newsletter-input">
+        <button type="submit" class="newsletter-btn">Subscribe</button>
+      </form>
+      <div class="subscriber-count">
+        Subscribers: <span id="subscriberCount">0</span>
+      </div>
     </div>
 
     <!-- Store Modal -->
@@ -112,6 +198,8 @@
         closeStoreModal();
       }
     });
+
+    // Newsletter form is handled by newsletter.js
   </script>
 </body>
 </html>
