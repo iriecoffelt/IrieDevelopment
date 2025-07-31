@@ -203,23 +203,35 @@ class NewsletterManager {
   async syncWithGitHub(githubToken) {
     try {
       console.log('Syncing subscribers to GitHub...');
+      console.log('Repository:', this.githubConfig.repo);
+      console.log('File path:', this.githubConfig.filePath);
       
       // Get current file SHA if it exists
       let sha = null;
       try {
-        const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+        const getResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
           headers: {
             'Authorization': `token ${githubToken}`,
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': 'Irie-Development-Newsletter'
           }
         });
-        if (response.ok) {
-          const data = await response.json();
+        
+        console.log('GET response status:', getResponse.status);
+        
+        if (getResponse.ok) {
+          const data = await getResponse.json();
           sha = data.sha;
+          console.log('Found existing file, SHA:', sha);
+        } else if (getResponse.status === 404) {
+          console.log('File doesn\'t exist yet, will create new file');
+        } else {
+          console.error('GET request failed:', getResponse.status, getResponse.statusText);
+          const errorData = await getResponse.json();
+          console.error('Error details:', errorData);
         }
       } catch (error) {
-        console.log('File doesn\'t exist yet, will create new file');
+        console.error('Error getting file SHA:', error);
       }
 
       // Prepare the commit
@@ -232,10 +244,15 @@ class NewsletterManager {
 
       if (sha) {
         commitData.sha = sha;
+        console.log('Using existing file SHA for update');
+      } else {
+        console.log('Creating new file');
       }
 
+      console.log('Commit data:', commitData);
+
       // Make the API call to update the file
-      const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+      const putResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
         method: 'PUT',
         headers: {
           'Authorization': `token ${githubToken}`,
@@ -246,13 +263,22 @@ class NewsletterManager {
         body: JSON.stringify(commitData)
       });
 
-      if (response.ok) {
+      console.log('PUT response status:', putResponse.status);
+
+      if (putResponse.ok) {
         console.log('Successfully synced subscribers to GitHub');
         return true;
       } else {
-        const error = await response.json();
+        const error = await putResponse.json();
         console.error('Failed to sync to GitHub:', error);
-        throw new Error(`GitHub API error: ${error.message}`);
+        console.error('Response status:', putResponse.status);
+        console.error('Response headers:', putResponse.headers);
+        
+        // Fallback: Save locally and show warning
+        console.warn('GitHub sync failed, saving locally as fallback');
+        localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+        
+        throw new Error(`GitHub API error: ${error.message} - Subscribers saved locally as fallback`);
       }
     } catch (error) {
       console.error('Error syncing with GitHub:', error);
