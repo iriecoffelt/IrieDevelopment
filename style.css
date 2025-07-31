@@ -347,6 +347,16 @@ h1 {
   transform: translateY(-2px);
 }
 
+.admin-link {
+  background: linear-gradient(135deg, #FF9500 0%, #FF2D92 100%);
+  color: white;
+  font-weight: 600;
+}
+
+.admin-link:hover {
+  background: linear-gradient(135deg, #FF8000 0%, #FF1A80 100%);
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .container {
