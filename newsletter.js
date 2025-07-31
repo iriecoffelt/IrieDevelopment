@@ -251,31 +251,106 @@ class NewsletterManager {
 
       console.log('Commit data:', commitData);
 
-      // Try using a CORS proxy or alternative approach
-      // Since direct PUT requests are blocked by browser CORS, we'll use a different strategy
-      console.log('Browser CORS detected - using alternative sync method');
+      // Use a CORS proxy to bypass browser restrictions
+      console.log('Using CORS proxy for automatic GitHub sync...');
       
-      // For now, save locally and provide instructions for manual sync
-      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+      // Try multiple CORS proxy options
+      const corsProxies = [
+        'https://cors-anywhere.herokuapp.com/',
+        'https://api.allorigins.win/raw?url=',
+        'https://corsproxy.io/?',
+        'https://thingproxy.freeboard.io/fetch/'
+      ];
       
-      // Create a downloadable file that can be manually uploaded
-      const dataStr = JSON.stringify(this.subscribers, null, 2);
-      const dataBlob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(dataBlob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'subscribers.json';
-      link.click();
-      URL.revokeObjectURL(url);
+      let success = false;
+      let lastError = null;
       
-      console.log('Subscribers saved locally and file downloaded for manual upload');
-      console.log('Please manually upload the downloaded subscribers.json file to your GitHub repository');
+      for (const proxy of corsProxies) {
+        try {
+          console.log(`Trying proxy: ${proxy}`);
+          
+          const putResponse = await fetch(`${proxy}https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${githubToken}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json',
+              'User-Agent': 'Irie-Development-Newsletter',
+              'Origin': window.location.origin
+            },
+            body: JSON.stringify(commitData)
+          });
+          
+          console.log(`Proxy ${proxy} response status:`, putResponse.status);
+          
+          if (putResponse.ok) {
+            console.log('Successfully synced subscribers to GitHub via proxy');
+            success = true;
+            break;
+          } else {
+            const error = await putResponse.json();
+            console.error(`Proxy ${proxy} failed:`, error);
+            lastError = error;
+          }
+        } catch (error) {
+          console.error(`Proxy ${proxy} error:`, error);
+          lastError = error;
+        }
+      }
       
-      return {
-        success: true,
-        message: 'Subscribers saved locally. File downloaded for manual upload to GitHub.',
-        manualUpload: true
-      };
+      if (success) {
+        // Also save locally as backup
+        localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+        return true;
+      } else {
+        // Fallback: Try using GitHub's API with different approach
+        console.log('All proxies failed, trying alternative approach...');
+        
+        // Try using GitHub's API with a different method
+        try {
+          const alternativeResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `token ${githubToken}`,
+              'Accept': 'application/vnd.github.v3+json',
+              'Content-Type': 'application/json',
+              'User-Agent': 'Irie-Development-Newsletter',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            mode: 'cors',
+            credentials: 'omit',
+            body: JSON.stringify(commitData)
+          });
+          
+          console.log('Alternative approach response status:', alternativeResponse.status);
+          
+          if (alternativeResponse.ok) {
+            console.log('Successfully synced subscribers to GitHub via alternative method');
+            localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+            return true;
+          } else {
+            const error = await alternativeResponse.json();
+            console.error('Alternative approach failed:', error);
+            throw new Error(`GitHub API error: ${error.message}`);
+          }
+        } catch (finalError) {
+          console.error('All automatic sync methods failed:', finalError);
+          
+          // Final fallback: Save locally and provide manual option
+          localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+          
+          const dataStr = JSON.stringify(this.subscribers, null, 2);
+          const dataBlob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(dataBlob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'subscribers.json';
+          link.click();
+          URL.revokeObjectURL(url);
+          
+          throw new Error(`Automatic sync failed. File downloaded for manual upload. Error: ${finalError.message}`);
+        }
+      }
       
     } catch (error) {
       console.error('Error syncing with GitHub:', error);

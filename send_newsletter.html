@@ -144,6 +144,12 @@
             border: 1px solid rgba(0, 122, 255, 0.3);
         }
         
+        .warning {
+            background: rgba(255, 149, 0, 0.2);
+            color: #FF9500;
+            border: 1px solid rgba(255, 149, 0, 0.3);
+        }
+        
         .subscriber-count {
             text-align: center;
             margin-bottom: 20px;
@@ -883,12 +889,15 @@ Irie Development`
                 showStatus('info', '🔄 Syncing subscribers to GitHub...');
                 
                 if (typeof newsletterManager !== 'undefined') {
-                    const result = await newsletterManager.syncWithGitHub(token);
-                    
-                    if (result.manualUpload) {
-                        showStatus('success', `✅ ${result.message}\n\n📁 A file has been downloaded. Please:\n1. Go to your GitHub repository\n2. Navigate to the data/ folder\n3. Upload the downloaded subscribers.json file\n4. Commit the changes`);
-                    } else {
-                        showStatus('success', '✅ Successfully synced subscribers to GitHub!');
+                    try {
+                        await newsletterManager.syncWithGitHub(token);
+                        showStatus('success', '✅ Successfully synced subscribers to GitHub automatically!');
+                    } catch (error) {
+                        if (error.message.includes('Automatic sync failed')) {
+                            showStatus('warning', `⚠️ ${error.message}\n\n📁 A file has been downloaded. Please:\n1. Go to your GitHub repository\n2. Navigate to the data/ folder\n3. Upload the downloaded subscribers.json file\n4. Commit the changes`);
+                        } else {
+                            showStatus('error', `❌ Failed to sync to GitHub: ${error.message}`);
+                        }
                     }
                 } else {
                     showStatus('error', '❌ Newsletter manager not available');
