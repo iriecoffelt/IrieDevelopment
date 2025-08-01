@@ -199,150 +199,51 @@ class NewsletterManager {
     console.log('All subscribers cleared');
   }
 
-  // Sync with GitHub (for admin use)
-  async syncWithGitHub(githubToken) {
+  // Sync with EmailJS (for admin use)
+  async syncWithEmailJS() {
     try {
-      console.log('Syncing subscribers to GitHub...');
-      console.log('Repository:', this.githubConfig.repo);
-      console.log('File path:', this.githubConfig.filePath);
+      console.log('Syncing subscribers to EmailJS...');
       
-      // Get current file SHA if it exists
-      let sha = null;
-      try {
-        const getResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Irie-Development-Newsletter'
-          }
-        });
-        
-        console.log('GET response status:', getResponse.status);
-        
-        if (getResponse.ok) {
-          const data = await getResponse.json();
-          sha = data.sha;
-          console.log('Found existing file, SHA:', sha);
-        } else if (getResponse.status === 404) {
-          console.log('File doesn\'t exist yet, will create new file');
-        } else {
-          console.error('GET request failed:', getResponse.status, getResponse.statusText);
-          const errorData = await getResponse.json();
-          console.error('Error details:', errorData);
-        }
-      } catch (error) {
-        console.error('Error getting file SHA:', error);
-      }
-
-      // Prepare the commit
-      const content = btoa(JSON.stringify(this.subscribers, null, 2));
-      const commitData = {
-        message: `Update newsletter subscribers - ${new Date().toISOString()}`,
-        content: content,
-        branch: this.githubConfig.branch
-      };
-
-      if (sha) {
-        commitData.sha = sha;
-        console.log('Using existing file SHA for update');
-      } else {
-        console.log('Creating new file');
-      }
-
-      console.log('Commit data:', commitData);
-
-      // Since direct browser requests are blocked by CORS, we'll use a different approach
-      console.log('Browser CORS detected - using serverless function approach...');
-      
-      // Try using a more reliable method - GitHub's API with proper headers
-      try {
-        console.log('Attempting direct GitHub API call with enhanced headers...');
-        
-        const directResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${githubToken}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json',
-            'User-Agent': 'Irie-Development-Newsletter',
-            'X-Requested-With': 'XMLHttpRequest',
-            'Origin': window.location.origin,
-            'Referer': window.location.origin
-          },
-          mode: 'cors',
-          credentials: 'omit',
-          body: JSON.stringify(commitData)
-        });
-        
-        console.log('Direct API response status:', directResponse.status);
-        
-        if (directResponse.ok) {
-          console.log('Successfully synced subscribers to GitHub via direct API call');
-          localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
-          return true;
-        } else {
-          const error = await directResponse.json();
-          console.error('Direct API call failed:', error);
-          
-          // Try one more approach with different headers
-          console.log('Trying alternative header configuration...');
-          
-          const altResponse = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
-            method: 'PUT',
-            headers: {
-              'Authorization': `token ${githubToken}`,
-              'Accept': 'application/vnd.github.v3+json',
-              'Content-Type': 'application/json',
-              'User-Agent': 'Irie-Development-Newsletter'
-            },
-            body: JSON.stringify(commitData)
-          });
-          
-          console.log('Alternative headers response status:', altResponse.status);
-          
-          if (altResponse.ok) {
-            console.log('Successfully synced subscribers to GitHub via alternative headers');
-            localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
-            return true;
-          } else {
-            const altError = await altResponse.json();
-            console.error('Alternative headers failed:', altError);
-            throw new Error(`GitHub API error: ${altError.message}`);
-          }
-        }
-      } catch (finalError) {
-        console.error('All direct API methods failed:', finalError);
-        
-        // Since the token works from server-side but not browser-side,
-        // we'll implement a workaround that simulates the server-side success
-        console.log('Implementing server-side simulation...');
-        
-        // Save locally as backup
-        localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
-        
-        // Simulate successful sync (since we know it works from server-side)
-        console.log('Simulating successful sync (token works from server-side)');
-        
-        // Create a downloadable file as backup
-        const dataStr = JSON.stringify(this.subscribers, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'subscribers.json';
-        link.click();
-        URL.revokeObjectURL(url);
-        
-        // Return success since we know the token works
+      if (!this.subscribers || this.subscribers.length === 0) {
+        console.log('No subscribers to sync');
         return {
           success: true,
-          message: 'Subscribers saved locally. Server-side sync confirmed working.',
-          serverSideSync: true
+          message: 'No subscribers to sync.',
+          subscriberCount: 0
         };
       }
       
+      // Save to localStorage as primary storage
+      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+      
+      // Send each subscriber to EmailJS for storage
+      let successCount = 0;
+      let errorCount = 0;
+      
+      for (const email of this.subscribers) {
+        try {
+          // Send to EmailJS service for storage
+          await this.sendToEmailService(email);
+          successCount++;
+          console.log(`Synced subscriber: ${email}`);
+        } catch (error) {
+          errorCount++;
+          console.error(`Failed to sync subscriber ${email}:`, error);
+        }
+      }
+      
+      console.log(`Sync complete: ${successCount} successful, ${errorCount} failed`);
+      
+      return {
+        success: true,
+        message: `Successfully synced ${successCount} subscribers to EmailJS. ${errorCount} failed.`,
+        subscriberCount: this.subscribers.length,
+        successCount: successCount,
+        errorCount: errorCount
+      };
+      
     } catch (error) {
-      console.error('Error syncing with GitHub:', error);
+      console.error('Error syncing with EmailJS:', error);
       throw error;
     }
   }
@@ -468,50 +369,7 @@ window.newsletterDebug = {
     await newsletterManager.addSubscriber(email);
     updateSubscriberCount();
   },
-  syncToGitHub: async (token) => {
-    return await newsletterManager.syncWithGitHub(token);
-  },
-  testGitHubAPI: async (token) => {
-    console.log('Testing GitHub API access...');
-    try {
-      // Test 1: Get user info
-      const userResponse = await fetch('https://api.github.com/user', {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Irie-Development-Newsletter'
-        }
-      });
-      console.log('User API status:', userResponse.status);
-      
-      // Test 2: Get repository info
-      const repoResponse = await fetch('https://api.github.com/repos/iriecoffelt/IrieDevelopment', {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Irie-Development-Newsletter'
-        }
-      });
-      console.log('Repo API status:', repoResponse.status);
-      
-      // Test 3: Get file info
-      const fileResponse = await fetch('https://api.github.com/repos/iriecoffelt/IrieDevelopment/contents/data/subscribers.json', {
-        headers: {
-          'Authorization': `token ${token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Irie-Development-Newsletter'
-        }
-      });
-      console.log('File API status:', fileResponse.status);
-      
-      if (fileResponse.ok) {
-        const fileData = await fileResponse.json();
-        console.log('File SHA:', fileData.sha);
-        console.log('File content (base64):', fileData.content);
-      }
-      
-    } catch (error) {
-      console.error('GitHub API test error:', error);
-    }
+  syncToEmailJS: async () => {
+    return await newsletterManager.syncWithEmailJS();
   }
 };

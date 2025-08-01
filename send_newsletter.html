@@ -531,8 +531,7 @@
                 <div class="secondary-buttons">
                     <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
                     <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
-                    <button type="button" class="sync-btn" onclick="syncToGitHub()">🔄 Sync to GitHub</button>
-                    <button type="button" class="test-btn test-api-btn" onclick="testGitHubAPI()">🔍 Test GitHub API</button>
+                    <button type="button" class="sync-btn" onclick="syncToEmailJS()">📧 Sync to EmailJS</button>
                 </div>
             </div>
         </form>
@@ -865,51 +864,31 @@ Irie Development`
             sendNewsletter(testSubject, testMessage);
         }
 
-        // Test GitHub API function
-        function testGitHubAPI() {
-            const token = sessionStorage.getItem('github_token');
-            if (!token) {
-                alert('❌ No GitHub token found. Please log in again.');
-                return;
-            }
-            
-            console.log('=== TESTING GITHUB API ===');
-            newsletterDebug.testGitHubAPI(token);
-        }
 
-        // Sync to GitHub function
-        async function syncToGitHub() {
-            const token = sessionStorage.getItem('github_token');
-            if (!token) {
-                alert('❌ No GitHub token found. Please log in again.');
-                return;
-            }
 
+        // Sync to EmailJS function
+        async function syncToEmailJS() {
             try {
-                showStatus('info', '🔄 Syncing subscribers to GitHub...');
+                showStatus('info', '📧 Syncing subscribers to EmailJS...');
                 
                 if (typeof newsletterManager !== 'undefined') {
                     try {
-                        const result = await newsletterManager.syncWithGitHub(token);
+                        const result = await newsletterManager.syncWithEmailJS();
                         
-                        if (result && result.serverSideSync) {
-                            showStatus('success', `✅ ${result.message}\n\n📁 A backup file has been downloaded.\n\n🔧 Since browser CORS blocks direct GitHub API calls, the sync is simulated.\nYour token works perfectly (confirmed via server-side test).`);
+                        if (result.success) {
+                            showStatus('success', `✅ ${result.message}\n\n📊 Total subscribers: ${result.subscriberCount}\n✅ Successfully synced: ${result.successCount}\n❌ Failed: ${result.errorCount}`);
                         } else {
-                            showStatus('success', '✅ Successfully synced subscribers to GitHub automatically!');
+                            showStatus('error', `❌ Failed to sync to EmailJS: ${result.message}`);
                         }
                     } catch (error) {
-                        if (error.message.includes('Automatic sync failed')) {
-                            showStatus('warning', `⚠️ ${error.message}\n\n📁 A file has been downloaded. Please:\n1. Go to your GitHub repository\n2. Navigate to the data/ folder\n3. Upload the downloaded subscribers.json file\n4. Commit the changes`);
-                        } else {
-                            showStatus('error', `❌ Failed to sync to GitHub: ${error.message}`);
-                        }
+                        showStatus('error', `❌ Failed to sync to EmailJS: ${error.message}`);
                     }
                 } else {
                     showStatus('error', '❌ Newsletter manager not available');
                 }
             } catch (error) {
                 console.error('Sync error:', error);
-                showStatus('error', `❌ Failed to sync to GitHub: ${error.message}`);
+                showStatus('error', `❌ Failed to sync to EmailJS: ${error.message}`);
             }
         }
         
