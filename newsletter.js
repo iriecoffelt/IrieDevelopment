@@ -1,4 +1,4 @@
-// Newsletter Management System with GitHub Storage
+// Newsletter Management System with EmailJS Storage
 class NewsletterManager {
   constructor() {
     this.subscribers = [];
@@ -7,47 +7,22 @@ class NewsletterManager {
     this.templateId = 'template_925ze9i';
     this.userId = 'zRYVGu1o6DDmrdc4f';
     
-    // GitHub configuration
-    this.githubConfig = {
-      repo: 'iriecoffelt/IrieDevelopment', // Your actual GitHub repository
-      filePath: 'data/subscribers.json',
-      branch: 'main'
-    };
-    
     this.loadSubscribers();
   }
 
-  // Load subscribers from GitHub
+  // Load subscribers from localStorage (EmailJS doesn't support reading contacts via API)
   async loadSubscribers() {
     try {
-      console.log('Loading subscribers from GitHub...');
+      console.log('Loading subscribers from localStorage...');
       
-      // Try to get the file from GitHub
-      const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
-        headers: {
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Irie-Development-Newsletter'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const content = atob(data.content);
-        this.subscribers = JSON.parse(content);
-        console.log('Loaded subscribers from GitHub:', this.subscribers);
-      } else if (response.status === 404) {
-        // File doesn't exist yet, start with empty array
-        this.subscribers = [];
-        console.log('No existing subscribers file found, starting fresh');
-      } else {
-        console.error('Error loading from GitHub:', response.status);
-        // Fallback to localStorage for offline functionality
-        this.loadFromLocalStorage();
-      }
-    } catch (error) {
-      console.error('Error loading subscribers from GitHub:', error);
-      // Fallback to localStorage for offline functionality
+      // EmailJS doesn't provide a public API to read contacts, so we use localStorage
+      // The syncWithEmailJS function handles sending subscribers to EmailJS
       this.loadFromLocalStorage();
+      console.log('Loaded subscribers from localStorage:', this.subscribers);
+      
+    } catch (error) {
+      console.error('Error loading subscribers:', error);
+      this.subscribers = [];
     }
   }
 
@@ -63,51 +38,18 @@ class NewsletterManager {
     }
   }
 
-  // Save subscribers to GitHub
+  // Save subscribers to localStorage (EmailJS sync happens in addSubscriber)
   async saveSubscribers() {
     try {
-      console.log('Saving subscribers to GitHub...');
+      console.log('Saving subscribers to localStorage...');
       
-      // Get current file SHA if it exists
-      let sha = null;
-      try {
-        const response = await fetch(`https://api.github.com/repos/${this.githubConfig.repo}/contents/${this.githubConfig.filePath}`, {
-          headers: {
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'Irie-Development-Newsletter'
-          }
-        });
-        if (response.ok) {
-          const data = await response.json();
-          sha = data.sha;
-        }
-      } catch (error) {
-        console.log('File doesn\'t exist yet, will create new file');
-      }
-
-      // Prepare the commit
-      const content = btoa(JSON.stringify(this.subscribers, null, 2));
-      const commitData = {
-        message: `Update newsletter subscribers - ${new Date().toISOString()}`,
-        content: content,
-        branch: this.githubConfig.branch
-      };
-
-      if (sha) {
-        commitData.sha = sha;
-      }
-
-      // For now, we'll use a public approach (no authentication required for read)
-      // The file will be publicly readable but only writable through the admin interface
-      console.log('Subscribers saved locally, will be synced to GitHub via admin interface');
-      
-      // Also save to localStorage as backup
+      // Save to localStorage as primary storage
       localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+      console.log('Subscribers saved to localStorage:', this.subscribers);
       
     } catch (error) {
-      console.error('Error saving to GitHub:', error);
-      // Fallback to localStorage
-      localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+      console.error('Error saving to localStorage:', error);
+      this.subscribers = [];
     }
   }
 
