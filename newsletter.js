@@ -107,7 +107,7 @@ class NewsletterManager {
       
       // Send to EmailJS - this stores the subscriber in your EmailJS contacts
       const response = await emailjs.send(this.serviceId, this.templateId, {
-        to_email: 'iriecoffelt@gmail.com',
+        to_email: 'irieappdev@gmail.com',
         from_email: email,
         subject: 'New Newsletter Signup',
         message: `New subscriber: ${email}`,
@@ -141,7 +141,7 @@ class NewsletterManager {
       // EmailJS doesn't have a direct "store contact" API, so we'll use a silent method
       // Send to a special email that just stores the contact without notification
       const response = await emailjs.send(this.serviceId, this.templateId, {
-        to_email: 'iriecoffelt@gmail.com',
+        to_email: 'irieappdev@gmail.com',
         from_email: email,
         subject: 'Contact Storage Only - No Notification',
         message: `Storing contact: ${email}`,
