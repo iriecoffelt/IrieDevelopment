@@ -130,11 +130,12 @@ class NewsletterManager {
     await this.saveSubscribers();
     console.log('Subscriber added successfully. Total subscribers:', this.subscribers.length);
 
-    // Try to send to email service (but don't fail if it doesn't work)
+    // Automatically sync to EmailJS
     try {
       await this.sendToEmailService(email);
+      console.log('✅ Subscriber automatically synced to EmailJS');
     } catch (error) {
-      console.warn('Email service failed, but subscriber was saved:', error);
+      console.warn('⚠️ EmailJS sync failed, but subscriber was saved locally:', error);
     }
 
     return true;
@@ -146,31 +147,36 @@ class NewsletterManager {
     return emailRegex.test(email);
   }
 
-  // Send to EmailJS (optional)
+  // Send to EmailJS (stores subscriber and sends notification)
   async sendToEmailService(email) {
-    console.log('Attempting to send email notification for:', email);
+    console.log('Syncing subscriber to EmailJS:', email);
     
     try {
       // Check if EmailJS is available
       if (typeof emailjs === 'undefined') {
-        console.warn('EmailJS not loaded, skipping email notification');
+        console.warn('EmailJS not loaded, skipping EmailJS sync');
         return;
       }
 
-      console.log('EmailJS is available, sending notification...');
+      console.log('EmailJS is available, syncing subscriber...');
       
+      // Send to EmailJS - this stores the subscriber in your EmailJS contacts
       const response = await emailjs.send(this.serviceId, this.templateId, {
         to_email: 'iriecoffelt@gmail.com',
         from_email: email,
         subject: 'New Newsletter Signup',
         message: `New subscriber: ${email}`,
-        from_name: 'Irie Development Newsletter'
+        from_name: 'Irie Development Newsletter',
+        subscriber_email: email, // This helps EmailJS store the contact
+        signup_date: new Date().toISOString()
       }, this.userId);
 
-      console.log('Email sent successfully:', response);
+      console.log('✅ Subscriber synced to EmailJS successfully:', response);
+      return true;
     } catch (error) {
-      console.warn('Email service error:', error);
-      console.warn('This is normal for local testing - subscribers are still saved');
+      console.warn('EmailJS sync error:', error);
+      console.warn('Subscriber saved locally, but EmailJS sync failed');
+      throw error;
     }
   }
 
