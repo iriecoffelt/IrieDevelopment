@@ -748,14 +748,32 @@ Irie Development`
             console.log('Subject:', subject);
             console.log('Message:', message);
             
-            // Get subscribers from NewsletterManager if available, otherwise from localStorage
+            // Get subscribers from localStorage (primary source)
             let subscribers;
-            if (typeof newsletterManager !== 'undefined') {
-                subscribers = newsletterManager.subscribers;
-                console.log('Using subscribers from NewsletterManager:', subscribers);
-            } else {
+            try {
+                if (typeof newsletterManager !== 'undefined') {
+                    subscribers = newsletterManager.subscribers;
+                    console.log('Using subscribers from NewsletterManager:', subscribers);
+                } else {
+                    subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
+                    console.log('Using subscribers from localStorage:', subscribers);
+                }
+                
+                // Sync all subscribers to EmailJS before sending
+                if (subscribers.length > 0 && typeof newsletterManager !== 'undefined') {
+                    console.log('Syncing all subscribers to EmailJS before sending newsletter...');
+                    try {
+                        await newsletterManager.syncWithEmailJS();
+                        console.log('✅ All subscribers synced to EmailJS');
+                    } catch (error) {
+                        console.warn('⚠️ EmailJS sync failed, but continuing with newsletter send:', error);
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error getting subscribers:', error);
                 subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
-                console.log('Using subscribers from localStorage:', subscribers);
+                console.log('Using subscribers from localStorage (fallback):', subscribers);
             }
             
             console.log('Subscribers to send to:', subscribers);
