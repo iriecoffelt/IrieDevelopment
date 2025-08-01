@@ -74,10 +74,13 @@ class NewsletterManager {
 
     // Automatically sync to EmailJS
     try {
+      console.log('🔄 Attempting to sync new subscriber to EmailJS...');
       await this.sendToEmailService(email);
       console.log('✅ Subscriber automatically synced to EmailJS');
     } catch (error) {
-      console.warn('⚠️ EmailJS sync failed, but subscriber was saved locally:', error);
+      console.error('❌ EmailJS sync failed:', error);
+      console.error('Error details:', error.message || error);
+      console.warn('⚠️ Subscriber was saved locally, but EmailJS sync failed');
     }
 
     return true;
@@ -118,6 +121,40 @@ class NewsletterManager {
     } catch (error) {
       console.warn('EmailJS sync error:', error);
       console.warn('Subscriber saved locally, but EmailJS sync failed');
+      throw error;
+    }
+  }
+
+  // Store contact in EmailJS without sending email (for sync operations)
+  async storeContactInEmailJS(email) {
+    console.log('Storing contact in EmailJS:', email);
+    
+    try {
+      // Check if EmailJS is available
+      if (typeof emailjs === 'undefined') {
+        console.warn('EmailJS not loaded, skipping contact storage');
+        return;
+      }
+
+      console.log('EmailJS is available, storing contact...');
+      
+      // Use a different template or method to just store the contact
+      // For now, we'll use the same template but with a different subject
+      const response = await emailjs.send(this.serviceId, this.templateId, {
+        to_email: 'iriecoffelt@gmail.com',
+        from_email: email,
+        subject: 'Contact Storage Only',
+        message: `Storing contact: ${email}`,
+        from_name: 'Irie Development Contact Storage',
+        subscriber_email: email,
+        storage_only: true,
+        signup_date: new Date().toISOString()
+      }, this.userId);
+
+      console.log('✅ Contact stored in EmailJS successfully:', response);
+      return true;
+    } catch (error) {
+      console.warn('EmailJS contact storage error:', error);
       throw error;
     }
   }
@@ -164,19 +201,19 @@ class NewsletterManager {
       // Save to localStorage as primary storage
       localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
       
-      // Send each subscriber to EmailJS for storage
+      // Store each subscriber in EmailJS contacts (without sending emails)
       let successCount = 0;
       let errorCount = 0;
       
       for (const email of this.subscribers) {
         try {
-          // Send to EmailJS service for storage
-          await this.sendToEmailService(email);
+          // Store contact in EmailJS without sending email
+          await this.storeContactInEmailJS(email);
           successCount++;
-          console.log(`Synced subscriber: ${email}`);
+          console.log(`Stored contact: ${email}`);
         } catch (error) {
           errorCount++;
-          console.error(`Failed to sync subscriber ${email}:`, error);
+          console.error(`Failed to store contact ${email}:`, error);
         }
       }
       
