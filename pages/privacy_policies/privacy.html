@@ -2,28 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Privacy Policies | Irie Development iOS Apps</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Read the privacy policies for Irie Development's iOS apps, including Sudoku Mindscape, Hidden Secrets of Arkansas, and Oliver's Whiteboard.">
-  <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700|Montserrat:700,400&display=swap" rel="stylesheet">
+  <title>Privacy Policies | Irie Development iOS Apps</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container fade-in">
-    <h1>Privacy Policies</h1>
-    <div class="subtitle">Read the privacy policies for our apps below.</div>
-    <div class="apps margin-top-large">
-      <a class="app-card" href="privacy-hidden-secrets-of-arkansas.html">
+  <main class="container fade-in">
+    <header>
+      <h1>Privacy Policies</h1>
+      <p class="subtitle">Read the privacy policies for our apps below.</p>
+    </header>
+    
+    <section class="apps margin-top-large" aria-label="Available privacy policies">
+      <a class="app-card" href="privacy-hidden-secrets-of-arkansas.html" aria-label="Read Hidden Secrets of Arkansas privacy policy">
         <span class="app-title">Hidden Secrets of Arkansas Privacy Policy</span>
       </a>
-      <a class="app-card" href="privacy-sudoku-mindscape.html">
+      
+      <a class="app-card" href="privacy-sudoku-mindscape.html" aria-label="Read Sudoku Mindscape privacy policy">
         <span class="app-title">Sudoku Mindscape Privacy Policy</span>
       </a>
-      <a class="app-card" href="privacy-olivers-whiteboard.html">
+      
+      <a class="app-card" href="privacy-olivers-whiteboard.html" aria-label="Read Oliver's Whiteboard privacy policy">
         <span class="app-title">Oliver's Whiteboard Privacy Policy</span>
       </a>
-    </div>
-    <a class="store-link margin-top-large" href="index.html">&#8592; Back to Home</a>
-  </div>
+    </section>
+    
+    <footer class="margin-top-large">
+      <a class="store-link" href="index.html" aria-label="Return to home page">
+        <span aria-hidden="true">&#8592;</span> Back to Home
+      </a>
+    </footer>
+  </main>
 </body>
 </html>
