@@ -9,37 +9,58 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Styles -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="container fade-in">
-    <header>
-      <h1>Privacy Policies</h1>
-      <p class="subtitle">Read the privacy policies for our apps below.</p>
-    </header>
+  <div class="container">
+    <h1>Privacy Policies</h1>
     
-    <section class="apps margin-top-large" aria-label="Available privacy policies">
-      <a class="app-card" href="privacy-hidden-secrets-of-arkansas.html" aria-label="Read Hidden Secrets of Arkansas privacy policy">
-        <span class="app-title">Hidden Secrets of Arkansas Privacy Policy</span>
+    <div class="about">
+      <strong>Irie Development</strong>
+      Read the privacy policies for our iOS applications below. Each app maintains the highest standards of user privacy and data protection.
+    </div>
+
+    <div class="apps">
+      <a class="app-card" href="privacy-hidden-secrets-of-arkansas.html">
+        <div class="app-icon-container">
+          <div class="app-icon" style="background: linear-gradient(135deg, #FF9500 0%, #FF2D92 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">🏔️</div>
+        </div>
+        <div class="app-info">
+          <span class="app-title">Hidden Secrets of Arkansas</span>
+          <span class="app-desc">Privacy Policy</span>
+        </div>
       </a>
-      
-      <a class="app-card" href="privacy-sudoku-mindscape.html" aria-label="Read Sudoku Mindscape privacy policy">
-        <span class="app-title">Sudoku Mindscape Privacy Policy</span>
+
+      <a class="app-card" href="privacy-sudoku-mindscape.html">
+        <div class="app-icon-container">
+          <div class="app-icon" style="background: linear-gradient(135deg, #34C759 0%, #20C997 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">🧩</div>
+        </div>
+        <div class="app-info">
+          <span class="app-title">Sudoku Mindscape</span>
+          <span class="app-desc">Privacy Policy</span>
+        </div>
       </a>
-      
-      <a class="app-card" href="privacy-olivers-whiteboard.html" aria-label="Read Oliver's Whiteboard privacy policy">
-        <span class="app-title">Oliver's Whiteboard Privacy Policy</span>
+
+      <a class="app-card" href="privacy-olivers-whiteboard.html">
+        <div class="app-icon-container">
+          <div class="app-icon" style="background: linear-gradient(135deg, #5856D6 0%, #007AFF 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem;">🎨</div>
+        </div>
+        <div class="app-info">
+          <span class="app-title">Oliver's Whiteboard</span>
+          <span class="app-desc">Privacy Policy</span>
+        </div>
       </a>
-    </section>
-    
-    <footer class="margin-top-large">
-      <a class="store-link" href="https://www.irie-development.com" aria-label="Return to home page">
-        <span aria-hidden="true">&#8592;</span> Back to Home
+    </div>
+
+    <div class="button-group">
+      <a href="https://irie-development.com" class="store-link nav">
+        <span style="margin-right: 0.5rem;">←</span>
+        Back to Home
       </a>
-    </footer>
-  </main>
+    </div>
+  </div>
 </body>
 </html>
