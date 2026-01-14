@@ -800,6 +800,15 @@ Irie Development`
             console.log(`Success: ${successCount}, Errors: ${errorCount}`);
 
             if (successCount > 0) {
+                // Track newsletter send
+                if (typeof newsletterManager !== 'undefined') {
+                    try {
+                        await newsletterManager.trackNewsletterSend(successCount);
+                        console.log('✅ Newsletter send tracked');
+                    } catch (error) {
+                        console.warn('⚠️ Failed to track newsletter send:', error);
+                    }
+                }
                 showStatus('success', `✅ Newsletter sent to ${successCount} subscribers. ${errorCount} failed.`);
             } else {
                 showStatus('error', `❌ Failed to send newsletter to any subscribers.`);

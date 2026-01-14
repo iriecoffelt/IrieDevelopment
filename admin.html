@@ -862,6 +862,426 @@
                 margin-left: 0;
             }
         }
+
+        /* Settings Modal Enhanced Styling */
+        .settings-modal-content {
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .settings-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin: 0 -2rem 2.5rem -2rem;
+            padding: 0 2rem 0 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .settings-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: -2px;
+        }
+
+        .settings-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .settings-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: #007AFF;
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .settings-tab-content {
+            display: none;
+        }
+
+        .settings-tab-content.active {
+            display: block;
+        }
+
+        .settings-section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .settings-section:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-section h3 {
+            color: var(--text-primary);
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+            font-weight: 700;
+        }
+
+        .settings-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .settings-form-group {
+            margin-bottom: 2rem;
+        }
+
+        .settings-form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .settings-label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .settings-input-group {
+            display: flex;
+            gap: 0.75rem;
+            align-items: stretch;
+        }
+
+        .settings-input,
+        .settings-textarea {
+            flex: 1;
+            width: 100%;
+            padding: 1rem 1.25rem;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .settings-input::placeholder,
+        .settings-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+
+        .settings-input:focus,
+        .settings-textarea:focus {
+            outline: none;
+            border-color: #007AFF;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+        }
+
+        .settings-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .settings-toggle-visibility {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            min-width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .settings-toggle-visibility:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .settings-help {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .settings-help a {
+            color: #007AFF;
+            text-decoration: none;
+        }
+
+        .settings-help a:hover {
+            text-decoration: underline;
+        }
+
+        .settings-help.danger {
+            color: #FF3B30;
+        }
+
+        .settings-test-btn {
+            background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .settings-test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 199, 89, 0.3);
+        }
+
+        .settings-test-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .settings-checkbox-group {
+            margin-bottom: 1.25rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .settings-checkbox-group:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .settings-checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .settings-checkbox {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #007AFF;
+        }
+
+        .settings-backup-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .settings-backup-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-backup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
+        }
+
+        .settings-danger-btn {
+            background: linear-gradient(135deg, #FF3B30 0%, #FF2D55 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .settings-danger-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.3);
+        }
+
+        .settings-actions {
+            display: flex;
+            gap: 1rem;
+            margin: 3rem -2rem -2rem -2rem;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .settings-save-btn {
+            flex: 1;
+            background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+            color: white;
+            border: none;
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 199, 89, 0.3);
+        }
+
+        .settings-cancel-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 1.25rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .settings-cancel-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .settings-modal-content {
+                padding: 1.5rem;
+            }
+
+            .settings-tabs {
+                margin: 0 -1.5rem 2rem -1.5rem;
+                padding: 0 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .settings-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .settings-section {
+                padding: 1.5rem;
+            }
+
+            .settings-actions {
+                margin: 2rem -1.5rem -1.5rem -1.5rem;
+                padding: 1.5rem;
+                flex-direction: column;
+            }
+
+            .settings-backup-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Content Editor Styles */
+        .content-editor-modal-content {
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .content-editor-tabs {
+            display: flex;
+            gap: 0.75rem;
+            margin: 0 -2rem 2.5rem -2rem;
+            padding: 0 2rem;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .content-editor-tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: -2px;
+        }
+
+        .content-editor-tab:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .content-editor-tab.active {
+            color: var(--text-primary);
+            border-bottom-color: #007AFF;
+            background: rgba(0, 122, 255, 0.1);
+        }
+
+        .content-editor-tab-content {
+            display: none;
+        }
+
+        .content-editor-tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .content-editor-modal-content {
+                padding: 1.5rem;
+            }
+
+            .content-editor-tabs {
+                margin: 0 -1.5rem 2rem -1.5rem;
+                padding: 0 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .content-editor-tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -910,7 +1330,7 @@
             <div class="admin-card">
                 <h3>⚙️ Settings</h3>
                 <p>Configure website settings, update content, and manage admin preferences.</p>
-                <a href="#" class="admin-btn settings" onclick="alert('Settings coming soon!')">Manage Settings</a>
+                <button type="button" class="admin-btn settings" onclick="openSettings()">Manage Settings</button>
             </div>
 
             <div class="admin-card">
@@ -920,15 +1340,9 @@
             </div>
 
             <div class="admin-card">
-                <h3>🛍️ Store Management</h3>
-                <p>Manage your Arkansas merch store, update products, and view sales data.</p>
-                <a href="#" class="admin-btn" onclick="alert('Store management coming soon!')">Manage Store</a>
-            </div>
-
-            <div class="admin-card">
                 <h3>📄 Content Editor</h3>
                 <p>Edit website content, update pages, and manage SEO settings.</p>
-                <a href="#" class="admin-btn" onclick="alert('Content editor coming soon!')">Edit Content</a>
+                <button type="button" class="admin-btn" onclick="openContentEditor()">Edit Content</button>
             </div>
         </div>
 
@@ -1104,18 +1518,259 @@
                 <p class="analytics-note">Subscriber count over time (last 30 days)</p>
             </div>
 
-            <div class="analytics-section">
-                <h3>📊 Recent Activity</h3>
-                <div id="recentActivityList" class="analytics-activity-list">
-                    <div class="loading-state">
-                        <p>⏳ Loading activity...</p>
+            <div class="refresh-btn-container">
+                <button type="button" onclick="loadAnalytics()" class="refresh-btn" id="refreshAnalyticsBtn">
+                    🔄 Refresh Analytics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="subscriber-modal">
+        <div class="subscriber-modal-content settings-modal-content">
+            <div class="subscriber-modal-header">
+                <h2>⚙️ Settings &amp; Configuration</h2>
+                <button type="button" class="close-modal" onclick="closeSettings()" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="settings-tabs">
+                <button type="button" class="settings-tab active" onclick="switchSettingsTab('api')">🔑 API Keys</button>
+                <button type="button" class="settings-tab" onclick="switchSettingsTab('preferences')">⚙️ Preferences</button>
+                <button type="button" class="settings-tab" onclick="switchSettingsTab('backup')">💾 Backup</button>
+            </div>
+
+            <!-- API Keys Tab -->
+            <div id="settingsApiTab" class="settings-tab-content active">
+                <div class="settings-section">
+                    <h3>🔐 JSONBin.io Configuration</h3>
+                    <p class="settings-description">Manage your JSONBin.io API keys for cloud storage.</p>
+
+                    <div class="settings-form-group">
+                        <label for="jsonbinAccessKey" class="settings-label">Access Key:</label>
+                        <div class="settings-input-group">
+                            <input type="password" id="jsonbinAccessKey" class="settings-input" placeholder="Enter JSONBin Access Key">
+                            <button type="button" class="settings-toggle-visibility" onclick="togglePasswordVisibility('jsonbinAccessKey', this)" title="Show/Hide">👁️</button>
+                        </div>
+                        <small class="settings-help">Used for secure cloud storage access. Get it from <a href="https://jsonbin.io/app/account/api-keys" target="_blank">JSONBin.io</a></small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="jsonbinBinId" class="settings-label">Subscriber Bin ID:</label>
+                        <input type="text" id="jsonbinBinId" class="settings-input" placeholder="Auto-generated or enter manually">
+                        <small class="settings-help">The bin ID where subscriber data is stored</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="jsonbinAppsBinId" class="settings-label">Apps Bin ID:</label>
+                        <input type="text" id="jsonbinAppsBinId" class="settings-input" placeholder="Auto-generated or enter manually">
+                        <small class="settings-help">The bin ID where app data is stored</small>
+                    </div>
+
+                    <button type="button" class="settings-test-btn" onclick="testJSONBinConnection()">
+                        🔍 Test Connection
+                    </button>
+                </div>
+
+                <div class="settings-section">
+                    <h3>📧 EmailJS Configuration</h3>
+                    <p class="settings-description">Manage your EmailJS service for sending newsletters.</p>
+
+                    <div class="settings-form-group">
+                        <label for="emailjsServiceId" class="settings-label">Service ID:</label>
+                        <input type="text" id="emailjsServiceId" class="settings-input" placeholder="service_xxxxx">
+                        <small class="settings-help">Your EmailJS service ID</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="emailjsTemplateId" class="settings-label">Template ID:</label>
+                        <input type="text" id="emailjsTemplateId" class="settings-input" placeholder="template_xxxxx">
+                        <small class="settings-help">Template for subscription confirmations</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="emailjsNewsletterTemplateId" class="settings-label">Newsletter Template ID:</label>
+                        <input type="text" id="emailjsNewsletterTemplateId" class="settings-input" placeholder="template_xxxxx">
+                        <small class="settings-help">Template for sending newsletters</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="emailjsUserId" class="settings-label">User ID (Public Key):</label>
+                        <input type="text" id="emailjsUserId" class="settings-input" placeholder="xxxxx">
+                        <small class="settings-help">Your EmailJS public key</small>
                     </div>
                 </div>
             </div>
 
-            <div class="refresh-btn-container">
-                <button type="button" onclick="loadAnalytics()" class="refresh-btn" id="refreshAnalyticsBtn">
-                    🔄 Refresh Analytics
+            <!-- Preferences Tab -->
+            <div id="settingsPreferencesTab" class="settings-tab-content">
+                <div class="settings-section">
+                    <h3>🌐 Website Preferences</h3>
+
+                    <div class="settings-form-group">
+                        <label for="websiteName" class="settings-label">Website Name:</label>
+                        <input type="text" id="websiteName" class="settings-input" placeholder="Irie Development">
+                        <small class="settings-help">Display name for your website</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="websiteDescription" class="settings-label">Website Description:</label>
+                        <textarea id="websiteDescription" class="settings-textarea" rows="3" placeholder="Description for SEO and social sharing"></textarea>
+                        <small class="settings-help">Meta description for search engines</small>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Backup Tab -->
+            <div id="settingsBackupTab" class="settings-tab-content">
+                <div class="settings-section">
+                    <h3>💾 Backup &amp; Restore</h3>
+                    <p class="settings-description">Backup your settings and restore from a previous backup.</p>
+
+                    <div class="settings-backup-actions">
+                        <button type="button" class="settings-backup-btn" onclick="exportSettings()">
+                            📥 Export Settings
+                        </button>
+                        <button type="button" class="settings-backup-btn" onclick="document.getElementById('settingsFileInput').click()">
+                            📤 Import Settings
+                        </button>
+                        <input type="file" id="settingsFileInput" accept=".json" style="display: none;" onchange="importSettings(event)">
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>🗑️ Danger Zone</h3>
+                        <p class="settings-description">Irreversible actions. Use with caution.</p>
+
+                        <button type="button" class="settings-danger-btn" onclick="clearAllData()">
+                            🗑️ Clear All Data
+                        </button>
+                        <small class="settings-help danger">This will delete all subscribers, apps, and settings. This action cannot be undone.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button type="button" class="settings-save-btn" onclick="saveSettings()">
+                    💾 Save Settings
+                </button>
+                <button type="button" class="settings-cancel-btn" onclick="closeSettings()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Editor Modal -->
+    <div id="contentEditorModal" class="subscriber-modal">
+        <div class="subscriber-modal-content content-editor-modal-content">
+            <div class="subscriber-modal-header">
+                <h2>📄 Content Editor</h2>
+                <button type="button" class="close-modal" onclick="closeContentEditor()" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="content-editor-tabs">
+                <button type="button" class="content-editor-tab active" onclick="switchContentTab('seo')">🔍 SEO Settings</button>
+                <button type="button" class="content-editor-tab" onclick="switchContentTab('pages')">📄 Pages</button>
+            </div>
+
+            <!-- SEO Settings Tab -->
+            <div id="contentSeoTab" class="content-editor-tab-content active">
+                <div class="settings-section">
+                    <h3>🌐 Homepage (index.html) SEO</h3>
+                    <p class="settings-description">Manage SEO metadata for your main homepage.</p>
+
+                    <div class="settings-form-group">
+                        <label for="seoPageTitle" class="settings-label">Page Title:</label>
+                        <input type="text" id="seoPageTitle" class="settings-input" placeholder="Irie Development | iOS App Developer & Arkansas Apps">
+                        <small class="settings-help">Appears in browser tabs and search results (50-60 characters recommended)</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoMetaDescription" class="settings-label">Meta Description:</label>
+                        <textarea id="seoMetaDescription" class="settings-textarea" rows="3" placeholder="Irie Development creates innovative iOS apps..."></textarea>
+                        <small class="settings-help">Appears in search results (150-160 characters recommended)</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoKeywords" class="settings-label">Keywords:</label>
+                        <input type="text" id="seoKeywords" class="settings-input" placeholder="iOS developer, iPhone apps, iPad apps...">
+                        <small class="settings-help">Comma-separated keywords for SEO</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoOgTitle" class="settings-label">Open Graph Title (Social Sharing):</label>
+                        <input type="text" id="seoOgTitle" class="settings-input" placeholder="Irie Development | iOS App Developer & Arkansas Apps">
+                        <small class="settings-help">Title shown when sharing on Facebook, LinkedIn, etc.</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoOgDescription" class="settings-label">Open Graph Description:</label>
+                        <textarea id="seoOgDescription" class="settings-textarea" rows="2" placeholder="Innovative iOS apps for iPhone, iPad, and Apple Watch..."></textarea>
+                        <small class="settings-help">Description shown when sharing on social media</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoOgImage" class="settings-label">Open Graph Image URL:</label>
+                        <input type="url" id="seoOgImage" class="settings-input" placeholder="https://iriedevelopment.com/og-image.jpg">
+                        <small class="settings-help">Image shown when sharing (1200x630px recommended)</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoTwitterTitle" class="settings-label">Twitter Card Title:</label>
+                        <input type="text" id="seoTwitterTitle" class="settings-input" placeholder="Irie Development | iOS App Developer & Arkansas Apps">
+                        <small class="settings-help">Title for Twitter sharing</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="seoTwitterDescription" class="settings-label">Twitter Card Description:</label>
+                        <textarea id="seoTwitterDescription" class="settings-textarea" rows="2" placeholder="Innovative iOS apps for iPhone, iPad, and Apple Watch..."></textarea>
+                        <small class="settings-help">Description for Twitter sharing</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pages Tab -->
+            <div id="contentPagesTab" class="content-editor-tab-content">
+                <div class="settings-section">
+                    <h3>📄 Page Content</h3>
+                    <p class="settings-description">Edit content for your website pages.</p>
+
+                    <div class="settings-form-group">
+                        <label for="contentPageSelect" class="settings-label">Select Page:</label>
+                        <select id="contentPageSelect" class="settings-input" onchange="loadPageContent()">
+                            <option value="index.html">Homepage (index.html)</option>
+                            <option value="pages/privacy_policies/privacy.html">Privacy Policy</option>
+                            <option value="pages/terms_of_service/terms.html">Terms of Service</option>
+                        </select>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="contentMainHeading" class="settings-label">Main Heading (H1):</label>
+                        <input type="text" id="contentMainHeading" class="settings-input" placeholder="Welcome to Irie Development">
+                        <small class="settings-help">Main page heading</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="contentAboutText" class="settings-label">About Section:</label>
+                        <textarea id="contentAboutText" class="settings-textarea" rows="5" placeholder="About your company..."></textarea>
+                        <small class="settings-help">Main about/description text</small>
+                    </div>
+
+                    <div class="settings-form-group">
+                        <label for="contentNewsletterText" class="settings-label">Newsletter Section Text:</label>
+                        <textarea id="contentNewsletterText" class="settings-textarea" rows="3" placeholder="Stay updated with our latest apps..."></textarea>
+                        <small class="settings-help">Text above the newsletter signup form</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-actions">
+                <button type="button" class="settings-save-btn" onclick="exportContentChanges()">
+                    📥 Export Changes
+                </button>
+                <button type="button" class="settings-cancel-btn" onclick="closeContentEditor()">
+                    Cancel
                 </button>
             </div>
         </div>
@@ -2185,14 +2840,25 @@
                 const growthRate = subscriberCount > 0 ? '+12%' : '0%';
                 document.getElementById('growthRateStat').textContent = growthRate;
                 
-                // Newsletter sends (would need to track this)
-                document.getElementById('newsletterSendsStat').textContent = '—';
+                // Newsletter sends count
+                let newsletterSends = 0;
+                try {
+                    if (typeof newsletterManager !== 'undefined') {
+                        newsletterSends = await newsletterManager.getNewsletterSendsCount();
+                    } else {
+                        // Fallback to localStorage
+                        const storedSends = localStorage.getItem('newsletter_sends_count');
+                        newsletterSends = parseInt(storedSends, 10) || 0;
+                    }
+                } catch (error) {
+                    console.error('Error loading newsletter sends count:', error);
+                    const storedSends = localStorage.getItem('newsletter_sends_count');
+                    newsletterSends = parseInt(storedSends, 10) || 0;
+                }
+                document.getElementById('newsletterSendsStat').textContent = newsletterSends.toLocaleString();
 
                 // Create simple subscriber growth chart with real historical data
                 await createSimpleChart(subscriberCount, historicalData);
-
-                // Load recent activity
-                loadRecentActivity(subscriberCount, appCount);
 
             } catch (error) {
                 console.error('Error loading analytics:', error);
@@ -2316,42 +2982,481 @@
             console.log('Chart created with', dataPoints.length, 'bars using real historical data');
         }
 
-        // Load recent activity
-        function loadRecentActivity(subscriberCount, appCount) {
-            const activityList = document.getElementById('recentActivityList');
-            if (!activityList) return;
-
-            const activities = [
-                {
-                    icon: '👥',
-                    title: 'Subscriber Management',
-                    description: `${subscriberCount} total subscribers`,
-                    time: 'Just now'
-                },
-                {
-                    icon: '📱',
-                    title: 'App Management',
-                    description: `${appCount} apps published`,
-                    time: 'Just now'
-                },
-                {
-                    icon: '📊',
-                    title: 'Analytics Dashboard',
-                    description: 'Viewing analytics data',
-                    time: 'Just now'
+        // Settings Management Functions
+        function openSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.add('active');
+            
+            // Wait for newsletterManager to be available (with retry)
+            let attempts = 0;
+            const maxAttempts = 10;
+            const checkAndLoad = () => {
+                attempts++;
+                if (typeof newsletterManager !== 'undefined' || attempts >= maxAttempts) {
+                    loadSettings();
+                } else {
+                    setTimeout(checkAndLoad, 100);
                 }
-            ];
-
-            activityList.innerHTML = activities.map(activity => `
-                <div class="analytics-activity-item">
-                    <div class="analytics-activity-icon">${activity.icon}</div>
-                    <div class="analytics-activity-content">
-                        <div class="analytics-activity-title">${activity.title}</div>
-                        <div class="analytics-activity-time">${activity.description} • ${activity.time}</div>
-                    </div>
-                </div>
-            `).join('');
+            };
+            checkAndLoad();
         }
+
+        function closeSettings() {
+            const modal = document.getElementById('settingsModal');
+            modal.classList.remove('active');
+        }
+
+        function switchSettingsTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.settings-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.settings-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`settings${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load current settings
+        function loadSettings() {
+            // Helper function to safely get value from newsletterManager
+            const getManagerValue = (key) => {
+                if (typeof newsletterManager !== 'undefined' && newsletterManager[key]) {
+                    return newsletterManager[key];
+                }
+                return '';
+            };
+
+            // Load JSONBin settings (prioritize localStorage, then newsletterManager, then defaults)
+            const storedAccessKey = localStorage.getItem('jsonbin_access_key');
+            const managerAccessKey = getManagerValue('jsonBinAccessKey');
+            document.getElementById('jsonbinAccessKey').value = storedAccessKey || managerAccessKey || '';
+
+            const storedBinId = localStorage.getItem('jsonbin_bin_id');
+            const managerBinId = getManagerValue('jsonBinBinId');
+            document.getElementById('jsonbinBinId').value = storedBinId || managerBinId || '';
+
+            document.getElementById('jsonbinAppsBinId').value = localStorage.getItem('apps_bin_id') || '69670ee1d0ea881f406a814c';
+
+            // Load EmailJS settings (prioritize localStorage, then newsletterManager)
+            const storedServiceId = localStorage.getItem('emailjs_service_id');
+            const managerServiceId = getManagerValue('serviceId');
+            document.getElementById('emailjsServiceId').value = storedServiceId || managerServiceId || '';
+
+            const storedTemplateId = localStorage.getItem('emailjs_template_id');
+            const managerTemplateId = getManagerValue('templateId');
+            document.getElementById('emailjsTemplateId').value = storedTemplateId || managerTemplateId || '';
+
+            document.getElementById('emailjsNewsletterTemplateId').value = localStorage.getItem('emailjs_newsletter_template_id') || '';
+
+            const storedUserId = localStorage.getItem('emailjs_user_id');
+            const managerUserId = getManagerValue('userId');
+            document.getElementById('emailjsUserId').value = storedUserId || managerUserId || '';
+
+            // Load website preferences
+            // Get description from localStorage, or use the default from index.html
+            // (Don't use admin.html's meta tag as it's different)
+            const defaultDescription = 'Irie Development creates innovative iOS apps for iPhone, iPad, and Apple Watch, including Sudoku Mindscape and Hidden Secrets of Arkansas. Based in Arkansas.';
+            document.getElementById('websiteName').value = localStorage.getItem('website_name') || 'Irie Development';
+            document.getElementById('websiteDescription').value = localStorage.getItem('website_description') || defaultDescription;
+
+            // Debug: Log what we loaded
+            console.log('📋 Settings loaded:', {
+                jsonbinAccessKey: document.getElementById('jsonbinAccessKey').value ? '***' : 'empty',
+                jsonbinBinId: document.getElementById('jsonbinBinId').value || 'empty',
+                emailjsServiceId: document.getElementById('emailjsServiceId').value || 'empty',
+                emailjsTemplateId: document.getElementById('emailjsTemplateId').value || 'empty',
+                emailjsUserId: document.getElementById('emailjsUserId').value || 'empty',
+                newsletterManagerExists: typeof newsletterManager !== 'undefined',
+                managerHasValues: typeof newsletterManager !== 'undefined' ? {
+                    serviceId: !!newsletterManager.serviceId,
+                    templateId: !!newsletterManager.templateId,
+                    userId: !!newsletterManager.userId,
+                    jsonBinAccessKey: !!newsletterManager.jsonBinAccessKey,
+                    jsonBinBinId: !!newsletterManager.jsonBinBinId
+                } : 'N/A'
+            });
+        }
+
+        // Save settings
+        async function saveSettings() {
+            try {
+                // Save JSONBin settings (note: these are sensitive, handle carefully)
+                const accessKey = document.getElementById('jsonbinAccessKey').value.trim();
+                const binId = document.getElementById('jsonbinBinId').value.trim();
+                const appsBinId = document.getElementById('jsonbinAppsBinId').value.trim();
+
+                // Save access key to localStorage (for persistence across page reloads)
+                if (accessKey) {
+                    localStorage.setItem('jsonbin_access_key', accessKey);
+                } else {
+                    localStorage.removeItem('jsonbin_access_key');
+                }
+
+                // Update newsletterManager instance if it exists
+                if (typeof newsletterManager !== 'undefined') {
+                    if (accessKey) {
+                        newsletterManager.jsonBinAccessKey = accessKey;
+                    }
+                    if (binId) {
+                        newsletterManager.jsonBinBinId = binId;
+                    }
+                }
+
+                // Save bin IDs (always save, even if empty, to allow clearing)
+                localStorage.setItem('jsonbin_bin_id', binId || '');
+                localStorage.setItem('apps_bin_id', appsBinId || '');
+
+                // Save EmailJS settings
+                const serviceId = document.getElementById('emailjsServiceId').value.trim();
+                const templateId = document.getElementById('emailjsTemplateId').value.trim();
+                const newsletterTemplateId = document.getElementById('emailjsNewsletterTemplateId').value.trim();
+                const userId = document.getElementById('emailjsUserId').value.trim();
+
+                // Update newsletterManager instance if it exists
+                if (typeof newsletterManager !== 'undefined') {
+                    if (serviceId) newsletterManager.serviceId = serviceId;
+                    if (templateId) newsletterManager.templateId = templateId;
+                    if (userId) newsletterManager.userId = userId;
+                }
+
+                // Save EmailJS settings to localStorage (always save, even if empty)
+                localStorage.setItem('emailjs_service_id', serviceId || '');
+                localStorage.setItem('emailjs_template_id', templateId || '');
+                localStorage.setItem('emailjs_newsletter_template_id', newsletterTemplateId || '');
+                localStorage.setItem('emailjs_user_id', userId || '');
+
+                // Save website preferences (always save, even if empty)
+                localStorage.setItem('website_name', document.getElementById('websiteName').value || '');
+                localStorage.setItem('website_description', document.getElementById('websiteDescription').value || '');
+
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'notification-success';
+                notification.textContent = '✅ Settings saved successfully!';
+                document.body.appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+
+                console.log('✅ Settings saved');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('❌ Failed to save settings: ' + error.message);
+            }
+        }
+
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        // Test JSONBin connection
+        async function testJSONBinConnection() {
+            const accessKey = document.getElementById('jsonbinAccessKey').value.trim();
+            const binId = document.getElementById('jsonbinBinId').value.trim() || localStorage.getItem('jsonbin_bin_id');
+
+            if (!accessKey) {
+                alert('❌ Please enter an Access Key first');
+                return;
+            }
+
+            const testBtn = event.target;
+            const originalText = testBtn.textContent;
+            testBtn.disabled = true;
+            testBtn.textContent = '⏳ Testing...';
+
+            try {
+                const url = binId 
+                    ? `https://api.jsonbin.io/v3/b/${binId}/latest`
+                    : 'https://api.jsonbin.io/v3/b';
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'X-Access-Key': accessKey
+                    }
+                });
+
+                if (response.ok || response.status === 404) {
+                    alert('✅ Connection successful! JSONBin API key is valid.');
+                } else {
+                    const error = await response.text();
+                    alert(`❌ Connection failed: ${response.status} - ${error}`);
+                }
+            } catch (error) {
+                alert('❌ Connection failed: ' + error.message);
+            } finally {
+                testBtn.disabled = false;
+                testBtn.textContent = originalText;
+            }
+        }
+
+        // Export settings
+        function exportSettings() {
+            const settings = {
+                jsonbin: {
+                    accessKey: document.getElementById('jsonbinAccessKey').value,
+                    binId: document.getElementById('jsonbinBinId').value,
+                    appsBinId: document.getElementById('jsonbinAppsBinId').value
+                },
+                emailjs: {
+                    serviceId: document.getElementById('emailjsServiceId').value,
+                    templateId: document.getElementById('emailjsTemplateId').value,
+                    newsletterTemplateId: document.getElementById('emailjsNewsletterTemplateId').value,
+                    userId: document.getElementById('emailjsUserId').value
+                },
+                website: {
+                    name: document.getElementById('websiteName').value,
+                    description: document.getElementById('websiteDescription').value
+                },
+                exportDate: new Date().toISOString()
+            };
+
+            const dataStr = JSON.stringify(settings, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `iriedevelopment-settings-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            alert('✅ Settings exported successfully!');
+        }
+
+        // Import settings
+        function importSettings(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const settings = JSON.parse(e.target.result);
+                    
+                    // Import JSONBin settings
+                    if (settings.jsonbin) {
+                        if (settings.jsonbin.accessKey) document.getElementById('jsonbinAccessKey').value = settings.jsonbin.accessKey;
+                        if (settings.jsonbin.binId) document.getElementById('jsonbinBinId').value = settings.jsonbin.binId;
+                        if (settings.jsonbin.appsBinId) document.getElementById('jsonbinAppsBinId').value = settings.jsonbin.appsBinId;
+                    }
+
+                    // Import EmailJS settings
+                    if (settings.emailjs) {
+                        if (settings.emailjs.serviceId) document.getElementById('emailjsServiceId').value = settings.emailjs.serviceId;
+                        if (settings.emailjs.templateId) document.getElementById('emailjsTemplateId').value = settings.emailjs.templateId;
+                        if (settings.emailjs.newsletterTemplateId) document.getElementById('emailjsNewsletterTemplateId').value = settings.emailjs.newsletterTemplateId;
+                        if (settings.emailjs.userId) document.getElementById('emailjsUserId').value = settings.emailjs.userId;
+                    }
+
+                    // Import website settings
+                    if (settings.website) {
+                        if (settings.website.name) document.getElementById('websiteName').value = settings.website.name;
+                        if (settings.website.description) document.getElementById('websiteDescription').value = settings.website.description;
+                    }
+
+                    alert('✅ Settings imported successfully! Click "Save Settings" to apply.');
+                } catch (error) {
+                    alert('❌ Failed to import settings: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Clear all data (dangerous!)
+        async function clearAllData() {
+            if (!confirm('⚠️ WARNING: This will delete ALL subscribers, apps, and settings!\n\nThis action CANNOT be undone.\n\nAre you absolutely sure?')) {
+                return;
+            }
+
+            if (!confirm('⚠️ Final confirmation: Delete EVERYTHING?')) {
+                return;
+            }
+
+            try {
+                // Clear subscribers if newsletterManager exists
+                if (typeof newsletterManager !== 'undefined') {
+                    await newsletterManager.clearSubscribers();
+                }
+
+                // Clear apps (if apps array exists in scope)
+                if (typeof apps !== 'undefined' && Array.isArray(apps)) {
+                    apps = [];
+                    await saveApps();
+                }
+
+                // Clear localStorage (this will clear settings and other cached data)
+                localStorage.clear();
+
+                alert('✅ All data cleared. Page will reload.');
+                location.reload();
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert('❌ Error clearing data: ' + error.message);
+            }
+        }
+
+        // Close settings modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const settingsModal = document.getElementById('settingsModal');
+            if (e.target === settingsModal) {
+                closeSettings();
+            }
+        });
+
+        // Content Editor Functions
+        function openContentEditor() {
+            const modal = document.getElementById('contentEditorModal');
+            modal.classList.add('active');
+            loadContentEditor();
+        }
+
+        function closeContentEditor() {
+            const modal = document.getElementById('contentEditorModal');
+            modal.classList.remove('active');
+        }
+
+        function switchContentTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.content-editor-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.content-editor-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`content${tabName.charAt(0).toUpperCase() + tabName.slice(1)}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load current content
+        function loadContentEditor() {
+            // Load SEO settings from localStorage or fetch from current page
+            document.getElementById('seoPageTitle').value = localStorage.getItem('seo_page_title') || 'Irie Development | iOS App Developer & Arkansas Apps';
+            document.getElementById('seoMetaDescription').value = localStorage.getItem('seo_meta_description') || 'Irie Development creates innovative iOS apps for iPhone, iPad, and Apple Watch, including Sudoku Mindscape and Hidden Secrets of Arkansas. Based in Arkansas.';
+            document.getElementById('seoKeywords').value = localStorage.getItem('seo_keywords') || 'iOS developer, iPhone apps, iPad apps, Apple Watch apps, Arkansas apps, Sudoku Mindscape, Hidden Secrets of Arkansas, mobile app development, iOS programming';
+            document.getElementById('seoOgTitle').value = localStorage.getItem('seo_og_title') || 'Irie Development | iOS App Developer & Arkansas Apps';
+            document.getElementById('seoOgDescription').value = localStorage.getItem('seo_og_description') || 'Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!';
+            document.getElementById('seoOgImage').value = localStorage.getItem('seo_og_image') || 'https://iriedevelopment.com/og-image.jpg';
+            document.getElementById('seoTwitterTitle').value = localStorage.getItem('seo_twitter_title') || 'Irie Development | iOS App Developer & Arkansas Apps';
+            document.getElementById('seoTwitterDescription').value = localStorage.getItem('seo_twitter_description') || 'Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!';
+
+            // Load page content
+            document.getElementById('contentMainHeading').value = localStorage.getItem('content_main_heading') || '';
+            document.getElementById('contentAboutText').value = localStorage.getItem('content_about_text') || '';
+            document.getElementById('contentNewsletterText').value = localStorage.getItem('content_newsletter_text') || '';
+        }
+
+        // Load page content based on selection
+        function loadPageContent() {
+            const pageSelect = document.getElementById('contentPageSelect');
+            const selectedPage = pageSelect.value;
+            console.log('Loading content for:', selectedPage);
+            // For now, just load from localStorage
+            // In a full implementation, you'd fetch the actual page content
+        }
+
+        // Export content changes as HTML snippets or instructions
+        function exportContentChanges() {
+            const changes = {
+                seo: {
+                    pageTitle: document.getElementById('seoPageTitle').value,
+                    metaDescription: document.getElementById('seoMetaDescription').value,
+                    keywords: document.getElementById('seoKeywords').value,
+                    ogTitle: document.getElementById('seoOgTitle').value,
+                    ogDescription: document.getElementById('seoOgDescription').value,
+                    ogImage: document.getElementById('seoOgImage').value,
+                    twitterTitle: document.getElementById('seoTwitterTitle').value,
+                    twitterDescription: document.getElementById('seoTwitterDescription').value
+                },
+                content: {
+                    mainHeading: document.getElementById('contentMainHeading').value,
+                    aboutText: document.getElementById('contentAboutText').value,
+                    newsletterText: document.getElementById('contentNewsletterText').value
+                },
+                exportDate: new Date().toISOString(),
+                instructions: 'Copy these values and update your HTML files manually, or use this as a reference for changes needed.'
+            };
+
+            // Save to localStorage
+            localStorage.setItem('seo_page_title', changes.seo.pageTitle);
+            localStorage.setItem('seo_meta_description', changes.seo.metaDescription);
+            localStorage.setItem('seo_keywords', changes.seo.keywords);
+            localStorage.setItem('seo_og_title', changes.seo.ogTitle);
+            localStorage.setItem('seo_og_description', changes.seo.ogDescription);
+            localStorage.setItem('seo_og_image', changes.seo.ogImage);
+            localStorage.setItem('seo_twitter_title', changes.seo.twitterTitle);
+            localStorage.setItem('seo_twitter_description', changes.seo.twitterDescription);
+            localStorage.setItem('content_main_heading', changes.content.mainHeading);
+            localStorage.setItem('content_about_text', changes.content.aboutText);
+            localStorage.setItem('content_newsletter_text', changes.content.newsletterText);
+
+            // Generate HTML snippets
+            const htmlSnippets = generateHTMLSnippets(changes);
+
+            // Create downloadable file
+            const dataStr = JSON.stringify({ changes, htmlSnippets }, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `content-changes-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            URL.revokeObjectURL(url);
+
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'notification-success';
+            notification.textContent = '✅ Content changes exported! Check the downloaded file for HTML snippets to update your pages.';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+
+            alert('✅ Content changes exported!\n\nA JSON file has been downloaded with:\n- All your content changes\n- HTML snippets ready to copy\n\nNote: For a static site, you\'ll need to manually update your HTML files with these changes.');
+        }
+
+        // Generate HTML snippets from changes
+        function generateHTMLSnippets(changes) {
+            return {
+                headSnippet: `<!-- SEO Meta Tags -->
+  <title>${escapeHtml(changes.seo.pageTitle)}</title>
+  <meta name="description" content="${escapeHtml(changes.seo.metaDescription)}">
+  <meta name="keywords" content="${escapeHtml(changes.seo.keywords)}">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:title" content="${escapeHtml(changes.seo.ogTitle)}">
+  <meta property="og:description" content="${escapeHtml(changes.seo.ogDescription)}">
+  <meta property="og:image" content="${escapeHtml(changes.seo.ogImage)}">
+  <!-- Twitter -->
+  <meta property="twitter:title" content="${escapeHtml(changes.seo.twitterTitle)}">
+  <meta property="twitter:description" content="${escapeHtml(changes.seo.twitterDescription)}">`,
+                contentSnippet: changes.content.mainHeading ? `<h1>${escapeHtml(changes.content.mainHeading)}</h1>` : '',
+                aboutSnippet: changes.content.aboutText ? `<div class="about">${escapeHtml(changes.content.aboutText).replace(/\n/g, '<br>')}</div>` : '',
+                newsletterSnippet: changes.content.newsletterText ? `<p>${escapeHtml(changes.content.newsletterText).replace(/\n/g, '<br>')}</p>` : ''
+            };
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Close content editor modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const contentEditorModal = document.getElementById('contentEditorModal');
+            if (e.target === contentEditorModal) {
+                closeContentEditor();
+            }
+        });
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {

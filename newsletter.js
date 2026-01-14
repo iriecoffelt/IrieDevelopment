@@ -57,6 +57,11 @@ class NewsletterManager {
             localStorage.setItem('newsletter_historical_data', JSON.stringify(cloudData.historicalData));
             console.log('✅ Loaded historical data:', cloudData.historicalData.length, 'data points');
           }
+          // Store newsletter sends count if available
+          if (cloudData.newsletterSends !== undefined) {
+            localStorage.setItem('newsletter_sends_count', cloudData.newsletterSends.toString());
+            console.log('✅ Loaded newsletter sends count:', cloudData.newsletterSends);
+          }
         } else {
           console.warn('⚠️ Unexpected data format from JSONBin:', cloudData);
           this.subscribers = [];
@@ -116,7 +121,8 @@ class NewsletterManager {
         subscribers: [],
         lastUpdated: new Date().toISOString(),
         count: 0,
-        historicalData: []
+        historicalData: [],
+        newsletterSends: 0
       };
       
       console.log('Creating new JSONBin...');
@@ -216,19 +222,23 @@ class NewsletterManager {
       const result = await response.json();
       const data = result.record || result;
       console.log('✅ Fetched from JSONBin:', data);
-      // Return the full data object to preserve historical data
+      // Return the full data object to preserve historical data and newsletter sends
       if (Array.isArray(data)) {
         // Old format - just an array of emails
-        return { subscribers: data, historicalData: [] };
+        return { subscribers: data, historicalData: [], newsletterSends: 0 };
       }
-      // New format - object with subscribers and historicalData
+      // New format - object with subscribers, historicalData, and newsletterSends
       const dataObj = {
         subscribers: data.subscribers || [],
-        historicalData: data.historicalData || []
+        historicalData: data.historicalData || [],
+        newsletterSends: data.newsletterSends || 0
       };
-      // Also store historical data in localStorage for quick access
+      // Also store historical data and newsletter sends in localStorage for quick access
       if (dataObj.historicalData.length > 0) {
         localStorage.setItem('newsletter_historical_data', JSON.stringify(dataObj.historicalData));
+      }
+      if (dataObj.newsletterSends > 0) {
+        localStorage.setItem('newsletter_sends_count', dataObj.newsletterSends.toString());
       }
       return dataObj;
       
@@ -279,11 +289,16 @@ class NewsletterManager {
         historicalData.sort((a, b) => new Date(a.date) - new Date(b.date));
       }
       
+      // Get existing newsletter sends count from localStorage (preserve it when saving subscribers)
+      const storedSends = localStorage.getItem('newsletter_sends_count');
+      const newsletterSends = parseInt(storedSends, 10) || 0;
+
       const dataToSave = {
         subscribers: subscribers,
         lastUpdated: new Date().toISOString(),
         count: subscribers.length,
-        historicalData: historicalData
+        historicalData: historicalData,
+        newsletterSends: newsletterSends
       };
       
       // If we have a bin ID, update it
@@ -732,6 +747,90 @@ class NewsletterManager {
       console.error('Error syncing subscribers:', error);
       throw error;
     }
+  }
+
+  // Track newsletter send
+  async trackNewsletterSend(recipientCount) {
+    try {
+      console.log('📧 Tracking newsletter send:', recipientCount, 'recipients');
+      
+      // Get current count from JSONBin
+      let currentSends = 0;
+      try {
+        const existingData = await this.fetchFromJSONBin();
+        if (existingData && typeof existingData === 'object' && !Array.isArray(existingData)) {
+          currentSends = existingData.newsletterSends || 0;
+        }
+      } catch (error) {
+        // If fetch fails, try localStorage
+        const storedSends = localStorage.getItem('newsletter_sends_count');
+        if (storedSends) {
+          currentSends = parseInt(storedSends, 10) || 0;
+        }
+      }
+
+      // Increment count (count each send, not each recipient)
+      const newCount = currentSends + 1;
+      
+      // Save to localStorage immediately
+      localStorage.setItem('newsletter_sends_count', newCount.toString());
+      
+      // Update JSONBin with new count
+      const dataToSave = {
+        subscribers: this.subscribers,
+        lastUpdated: new Date().toISOString(),
+        count: this.subscribers.length,
+        historicalData: this.getHistoricalData() || [],
+        newsletterSends: newCount
+      };
+
+      if (this.jsonBinBinId) {
+        const apiConfig = this.getApiKeyConfig();
+        const response = await fetch(`${this.jsonBinUrl}/${this.jsonBinBinId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            [apiConfig.header]: apiConfig.key
+          },
+          body: JSON.stringify(dataToSave)
+        });
+
+        if (response.ok) {
+          console.log('✅ Newsletter send tracked:', newCount, 'total sends');
+          return newCount;
+        } else {
+          console.warn('⚠️ Failed to save newsletter send count to JSONBin, but saved to localStorage');
+          return newCount;
+        }
+      } else {
+        console.warn('⚠️ No JSONBin bin ID, saved to localStorage only');
+        return newCount;
+      }
+    } catch (error) {
+      console.error('Error tracking newsletter send:', error);
+      // Still try to save to localStorage
+      const storedSends = localStorage.getItem('newsletter_sends_count');
+      const currentSends = parseInt(storedSends, 10) || 0;
+      const newCount = currentSends + 1;
+      localStorage.setItem('newsletter_sends_count', newCount.toString());
+      return newCount;
+    }
+  }
+
+  // Get newsletter sends count
+  async getNewsletterSendsCount() {
+    try {
+      // Try JSONBin first
+      const existingData = await this.fetchFromJSONBin();
+      if (existingData && typeof existingData === 'object' && !Array.isArray(existingData)) {
+        return existingData.newsletterSends || 0;
+      }
+    } catch (error) {
+      // Fallback to localStorage
+      const storedSends = localStorage.getItem('newsletter_sends_count');
+      return parseInt(storedSends, 10) || 0;
+    }
+    return 0;
   }
 }
 
