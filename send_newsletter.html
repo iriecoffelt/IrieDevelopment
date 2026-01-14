@@ -109,16 +109,6 @@
             box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3);
         }
         
-        .export-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .export-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        
         .status {
             margin-top: 20px;
             padding: 15px;
@@ -529,7 +519,6 @@
                     <div class="button-group">
                 <button type="submit" class="send-btn">📤 Send Newsletter</button>
                 <div class="secondary-buttons">
-                    <button type="button" class="export-btn" onclick="exportSubscribers()">📊 Export Subscribers</button>
                     <button type="button" class="test-btn" onclick="testNewsletter()">🧪 Test Newsletter</button>
                     <button type="button" class="sync-btn" onclick="syncToEmailJS()">🔄 Sync Subscribers</button>
                 </div>
@@ -550,7 +539,6 @@
                 <div id="subscriberList">Loading subscribers...</div>
             </div>
             <div class="management-actions">
-                <button type="button" onclick="exportSubscribers()" class="btn btn-secondary">📥 Export Subscribers</button>
                 <button type="button" onclick="clearAllSubscribers()" class="btn btn-danger">🗑️ Clear All</button>
             </div>
         </div>
@@ -575,18 +563,40 @@
             }
         }
         
-        // Load subscribers from localStorage
-        function loadSubscribers() {
+        // Load subscribers from cloud storage (async)
+        async function loadSubscribers() {
+            // Wait for NewsletterManager to be available and initialized
+            let retries = 0;
+            const maxRetries = 10;
+            
+            while (typeof newsletterManager === 'undefined' && retries < maxRetries) {
+                console.log(`Waiting for NewsletterManager to initialize... (attempt ${retries + 1}/${maxRetries})`);
+                await new Promise(resolve => setTimeout(resolve, 200));
+                retries++;
+            }
+            
             // Use the NewsletterManager from newsletter.js if available
             if (typeof newsletterManager !== 'undefined') {
-                const subscribers = newsletterManager.subscribers;
+                // Wait for subscribers to be loaded from cloud
+                await newsletterManager.loadSubscribers();
+                let subscribers = newsletterManager.subscribers;
+                
+                // If still empty, wait a bit more and try again (race condition protection)
+                if (subscribers.length === 0) {
+                    console.log('⚠️ Subscribers array is empty, waiting and retrying...');
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await newsletterManager.loadSubscribers();
+                    subscribers = newsletterManager.subscribers;
+                }
+                
                 console.log('Loading subscribers from NewsletterManager:', subscribers);
                 displaySubscribers(subscribers);
                 updateSubscriberCount(subscribers.length);
             } else {
                 // Fallback to direct localStorage access
-                const subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
-                console.log('Loading subscribers from localStorage:', subscribers);
+                const stored = localStorage.getItem('newsletter_subscribers');
+                const subscribers = stored ? JSON.parse(stored) : [];
+                console.log('Loading subscribers from localStorage (fallback):', subscribers);
                 displaySubscribers(subscribers);
                 updateSubscriberCount(subscribers.length);
             }
@@ -659,35 +669,6 @@
             }
         }
         
-        // Export subscribers
-        function exportSubscribers() {
-            let subscribers;
-            if (typeof newsletterManager !== 'undefined') {
-                subscribers = newsletterManager.subscribers;
-            } else {
-                subscribers = JSON.parse(localStorage.getItem('newsletterSubscribers') || '[]');
-            }
-            
-            if (subscribers.length === 0) {
-                alert('No subscribers to export.');
-                return;
-            }
-            
-            const csvContent = 'data:text/csv;charset=utf-8,' + 
-                'Email\n' + 
-                subscribers.join('\n');
-            
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement('a');
-            link.setAttribute('href', encodedUri);
-            link.setAttribute('download', 'newsletter_subscribers.csv');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            alert(`Exported ${subscribers.length} subscribers to CSV file.`);
-        }
-
         // Load template
         function loadTemplate(type) {
             const templates = {
@@ -947,8 +928,8 @@ Irie Development`
                         sessionStorage.setItem('github_user', user.login);
                         
                         // Initialize newsletter system
-                        setTimeout(() => {
-                            loadSubscribers();
+                        setTimeout(async () => {
+                            await loadSubscribers();
                             
                             const form = document.getElementById('newsletterForm');
                             if (form) {
@@ -986,8 +967,8 @@ Irie Development`
                 document.getElementById('newsletterSection').style.display = 'block';
                 
                 // Initialize newsletter system
-                setTimeout(() => {
-                    loadSubscribers();
+                setTimeout(async () => {
+                    await loadSubscribers();
                     
                     const form = document.getElementById('newsletterForm');
                     if (form) {

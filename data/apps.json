@@ -1,0 +1,30 @@
+{
+  "apps": [
+    {
+      "title": "Sudoku Mindscape - Basic",
+      "description": "Puzzle",
+      "url": "https://apps.apple.com/us/app/sudoku-mindscape/id6745157437",
+      "icon": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/8a/fe/d7/8afed7e5-ef74-5dcd-b430-1bcd35851d4d/AppIcon-0-0-1x_U007epad-0-1-85-220.png/540x540bb.jpg"
+    },
+    {
+      "title": "Sudoku Mindscape - Pro",
+      "description": "Puzzle",
+      "url": "https://apps.apple.com/us/app/sudoku-mindscape-pro/id6749170748",
+      "icon": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/d2/df/ab/d2dfab9b-25c0-8935-7579-e030ec38e241/AppIcon-0-0-1x_U007epad-0-1-85-220.png/540x540bb.jpg"
+    },
+    {
+      "title": "Hidden Secrets of Arkansas",
+      "description": "Travel",
+      "url": "https://apps.apple.com/us/app/hidden-secrets-of-arkansas/id1576165434",
+      "icon": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ee/db/73/eedb73da-4212-a1ec-c4fd-e3bcd118b15b/AppIcon-0-1x_U007epad-0-7-0-sRGB-85-220-0.png/540x540bb.jpg"
+    },
+    {
+      "title": "Oliver's Whiteboard",
+      "description": "Education",
+      "url": "https://apps.apple.com/us/app/olivers-whiteboard/id1554030752",
+      "icon": "https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/3d/37/92/3d3792af-8fc8-7d64-a95d-60d6d616b796/AppIcon-0-1x_U007emarketing-0-7-0-sRGB-85-220.png/540x540bb.jpg"
+    }
+  ],
+  "lastUpdated": "2024-01-01T00:00:00.000Z",
+  "count": 4
+}
