@@ -1,2 +1,9 @@
 # Google App Engine generated folder
 appengine-generated/
+
+# Backup files created during build
+*.backup
+*.bak
+
+# Environment config files (if generated)
+env-config.js
