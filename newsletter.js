@@ -3,16 +3,21 @@ class NewsletterManager {
   constructor() {
     this.subscribers = [];
     this.apiEndpoint = 'https://api.emailjs.com/api/v1.0/email/send';
-    this.serviceId = 'service_ju06a1p';
-    this.templateId = 'template_925ze9i';
-    this.userId = 'zRYVGu1o6DDmrdc4f';
+    
+    // Use secrets from GitHub Actions if available (env-config.js), otherwise use hardcoded fallbacks
+    // This allows secrets to be injected during deployment while maintaining local development capability
+    const envConfig = window.ENV_CONFIG || {};
+    
+    this.serviceId = envConfig.emailjsServiceId || 'service_ju06a1p';
+    this.templateId = envConfig.emailjsTemplateId || 'template_925ze9i';
+    this.userId = envConfig.emailjsUserId || 'zRYVGu1o6DDmrdc4f';
     
     // JSONBin.io Cloud Storage Configuration
     // Using Access Key for limited permissions (more secure for frontend)
     // Access Keys can be configured with specific permissions (read-only, write-only, etc.)
-    this.jsonBinAccessKey = '$2a$10$.tte9gaAB5LnvRsH2dUz4OFuloHrp3GWDQsCdpRmgcfZ3uf4TYbsq'.trim();
+    this.jsonBinAccessKey = (envConfig.jsonbinAccessKey || '$2a$10$.tte9gaAB5LnvRsH2dUz4OFuloHrp3GWDQsCdpRmgcfZ3uf4TYbsq').trim();
     this.useAccessKey = true; // Using Access Key for better security
-    this.jsonBinBinId = '6967037143b1c97be92f1730'; // Will be created automatically on first subscriber, or set manually if you have an existing bin ID
+    this.jsonBinBinId = envConfig.jsonbinBinId || '6967037143b1c97be92f1730'; // Will be created automatically on first subscriber, or set manually if you have an existing bin ID
     this.jsonBinUrl = 'https://api.jsonbin.io/v3/b'; // JSONBin API v3
     this.jsonBinName = 'IRIEDEVELOPMENTSUBSCRIBERCOUNTS'; // Bin name for organization
     
