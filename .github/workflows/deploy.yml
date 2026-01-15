@@ -42,9 +42,8 @@ jobs:
             jsonbinBinId: '${{ secrets.JSONBIN_BIN_ID }}'
           };
           EOF
-        env:
-          # Secrets are automatically available via ${{ secrets.SECRET_NAME }}
-          # They are masked in logs for security
+        # Note: Secrets are automatically available via ${{ secrets.SECRET_NAME }}
+        # They are masked in logs for security
 
       # Inject secrets into newsletter.js (if using placeholders)
       # Uncomment this step if you've updated newsletter.js to use placeholders
