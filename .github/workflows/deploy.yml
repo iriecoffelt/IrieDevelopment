@@ -91,6 +91,8 @@ jobs:
           cname: true
           keep_files: false
           force_orphan: false
+          # Allow creating gh-pages branch if it doesn't exist
+          allow_empty_commit: true
 
       # Example: Deploy to other hosting services
       - name: Deploy to custom server (example)
