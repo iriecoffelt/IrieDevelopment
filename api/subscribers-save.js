@@ -42,6 +42,7 @@ export default async function handler(req, res) {
 
     // Get secrets from environment variables (set in Vercel dashboard)
     // Trim whitespace to prevent issues
+    // Subscribers bin ID: 6967037143b1c97be92f1730 (private - contains subscribers, historicalData, newsletterSends)
     const jsonBinAccessKey = (process.env.JSONBIN_ACCESS_KEY || '').trim();
     const jsonBinBinId = (process.env.JSONBIN_BIN_ID || '').trim();
 
