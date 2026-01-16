@@ -7,3 +7,5 @@ appengine-generated/
 
 # Environment config files (if generated)
 env-config.js
+.vercel
+.env*.local
