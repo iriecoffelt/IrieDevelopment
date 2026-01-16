@@ -545,7 +545,11 @@
         </div>
     </div>
 
-    <script src="newsletter.js"></script>
+    <!-- Serverless API Configuration -->
+    <script>
+      window.SERVERLESS_API_URL = 'https://irie-development.vercel.app/api';
+    </script>
+    <script src="newsletter-serverless.js"></script>
     <script>
         // EmailJS configuration
         const EMAILJS_CONFIG = {
