@@ -172,6 +172,7 @@ class NewsletterManager {
   // Add subscriber (uses serverless API)
   async addSubscriber(email) {
     email = email.trim().toLowerCase();
+    console.log('📧 Adding subscriber:', email);
     
     if (!this.isValidEmail(email)) {
       throw new Error('Invalid email address');
@@ -179,6 +180,7 @@ class NewsletterManager {
     
     // Load subscribers if not already loaded (for homepage form submissions)
     if (this.subscribers.length === 0) {
+      console.log('📥 Loading subscribers before adding...');
       await this.loadSubscribers();
     }
     
@@ -186,17 +188,29 @@ class NewsletterManager {
       throw new Error('Email already subscribed');
     }
     
+    console.log('➕ Adding email to subscribers array...');
     this.subscribers.push(email);
+    console.log('📊 Total subscribers now:', this.subscribers.length);
     localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
     
     // Save to serverless API
+    console.log('💾 Saving to serverless API...');
     const saved = await this.saveToServerlessAPI(this.subscribers);
     if (!saved) {
-      console.warn('⚠️ Failed to save to serverless API, but subscriber added locally');
+      console.error('❌ Failed to save to serverless API');
+      throw new Error('Failed to save subscriber. Please try again.');
     }
+    console.log('✅ Successfully saved to serverless API');
     
     // Send welcome email via EmailJS
-    await this.sendWelcomeEmail(email);
+    console.log('📨 Sending welcome email...');
+    try {
+      await this.sendWelcomeEmail(email);
+      console.log('✅ Welcome email sent');
+    } catch (emailError) {
+      console.warn('⚠️ Failed to send welcome email:', emailError);
+      // Don't throw - subscriber is already saved
+    }
     
     return true;
   }
@@ -387,35 +401,42 @@ class NewsletterManager {
 // Only auto-initialize on admin pages or if explicitly requested
 let newsletterManager;
 
+// Function to initialize and export the manager
+function initializeNewsletterManager() {
+  if (!newsletterManager) {
+    newsletterManager = new NewsletterManager();
+    // Export for use in other scripts
+    if (typeof window !== 'undefined') {
+      window.newsletterManager = newsletterManager;
+      console.log('✅ NewsletterManager initialized');
+    }
+  }
+  return newsletterManager;
+}
+
 // Check if we're on an admin page
 const isAdminPage = window.location.pathname.includes('admin') || 
                     window.location.pathname.includes('send_newsletter') ||
                     document.getElementById('admin-dashboard') !== null ||
                     document.querySelector('.admin-panel') !== null;
 
-// Only auto-initialize on admin pages
-// On homepage, initialization will happen on-demand when newsletter form is submitted
-if (isAdminPage) {
+// Initialize immediately if DOM is ready, otherwise wait for DOMContentLoaded
+function setupNewsletterManager() {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      newsletterManager = new NewsletterManager();
-    });
+    document.addEventListener('DOMContentLoaded', initializeNewsletterManager);
   } else {
-    newsletterManager = new NewsletterManager();
-  }
-} else {
-  // On homepage, create manager but don't auto-load subscribers
-  // Subscribers will be loaded on-demand when needed (e.g., form submission)
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      newsletterManager = new NewsletterManager();
-    });
-  } else {
-    newsletterManager = new NewsletterManager();
+    // DOM is already ready, initialize immediately
+    initializeNewsletterManager();
   }
 }
 
-// Export for use in other scripts
-if (typeof window !== 'undefined') {
-  window.newsletterManager = newsletterManager;
-}
+// Always initialize (subscribers will only auto-load on admin pages)
+setupNewsletterManager();
+
+// Fallback: ensure it's initialized after a short delay (in case DOMContentLoaded already fired)
+setTimeout(() => {
+  if (!window.newsletterManager) {
+    console.warn('NewsletterManager not initialized, initializing now...');
+    initializeNewsletterManager();
+  }
+}, 100);

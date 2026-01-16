@@ -101,6 +101,32 @@ export default async function handler(req, res) {
       newsletterSends: newsletterSends || 0
     };
 
+    // First, check if bin contains apps data (wrong bin type)
+    // If so, we'll overwrite it with subscribers structure
+    try {
+      const checkResponse = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinBinId}/latest`, {
+        method: 'GET',
+        headers: {
+          'X-Access-Key': jsonBinAccessKey,
+          'Accept': 'application/json'
+        }
+      });
+      
+      if (checkResponse.ok) {
+        const existingData = await checkResponse.json();
+        const existingRecord = existingData.record || existingData;
+        
+        // If bin contains apps data, log warning but proceed to overwrite with subscribers structure
+        if (existingRecord.apps && Array.isArray(existingRecord.apps) && !existingRecord.subscribers) {
+          console.warn('⚠️ Bin contains apps data. Overwriting with subscribers structure.');
+          console.warn('⚠️ If this is the wrong bin, please check JSONBIN_BIN_ID environment variable.');
+        }
+      }
+    } catch (checkError) {
+      // Ignore check errors, proceed with save
+      console.log('Could not check existing bin data, proceeding with save');
+    }
+
     // Save to JSONBin.io
     const response = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinBinId}`, {
       method: 'PUT',
