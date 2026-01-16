@@ -13,11 +13,12 @@ class NewsletterManager {
     this.userId = envConfig.emailjsUserId || 'zRYVGu1o6DDmrdc4f';
     
     // JSONBin.io Cloud Storage Configuration
-    // Using Access Key for limited permissions (more secure for frontend)
-    // Access Keys can be configured with specific permissions (read-only, write-only, etc.)
-    this.jsonBinAccessKey = (envConfig.jsonbinAccessKey || '$2a$10$.tte9gaAB5LnvRsH2dUz4OFuloHrp3GWDQsCdpRmgcfZ3uf4TYbsq').trim();
-    this.useAccessKey = true; // Using Access Key for better security
-    this.jsonBinBinId = envConfig.jsonbinBinId || '6967037143b1c97be92f1730'; // Will be created automatically on first subscriber, or set manually if you have an existing bin ID
+    // SECURITY NOTE: JSONBin credentials are now stored server-side in Vercel serverless functions
+    // This file should NOT contain hardcoded secrets. If you need JSONBin access, use the serverless API.
+    // For legacy support, check env-config.js, but prefer using newsletter-serverless.js instead
+    this.jsonBinAccessKey = envConfig.jsonbinAccessKey || null; // No hardcoded fallback for security
+    this.useAccessKey = true;
+    this.jsonBinBinId = envConfig.jsonbinBinId || null; // No hardcoded fallback for security
     this.jsonBinUrl = 'https://api.jsonbin.io/v3/b'; // JSONBin API v3
     this.jsonBinName = 'IRIEDEVELOPMENTSUBSCRIBERCOUNTS'; // Bin name for organization
     

@@ -36,12 +36,12 @@ jobs:
           cat > env-config.js << EOF
           // This file is generated during deployment
           // DO NOT commit secrets directly to the repository
+          // Note: JSONBin secrets are NOT included here - they're stored securely
+          // in Vercel serverless functions and never exposed to the browser
           window.ENV_CONFIG = {
             emailjsUserId: '${{ secrets.EMAILJS_USER_ID }}',
             emailjsServiceId: '${{ secrets.EMAILJS_SERVICE_ID }}',
-            emailjsTemplateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}',
-            jsonbinAccessKey: '${{ secrets.JSONBIN_ACCESS_KEY }}',
-            jsonbinBinId: '${{ secrets.JSONBIN_BIN_ID }}'
+            emailjsTemplateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'
           };
           EOF
           # Verify file was created and contains content
