@@ -6,4 +6,3 @@ appengine-generated/
 *.bak
 
 # Environment config files (if generated)
-env-config.js
