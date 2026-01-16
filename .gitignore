@@ -1,10 +1,12 @@
-# Google App Engine generated folder
-appengine-generated/
+# Environment config files (generated during deployment)
 
-# Backup files created during build
-*.backup
-*.bak
-
-# Environment config files (if generated)
+# Vercel
 .vercel
 .env*.local
+
+# macOS
+.DS_Store
+
+# Backup files
+*.backup
+*.bak

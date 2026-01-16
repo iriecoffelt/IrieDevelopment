@@ -579,7 +579,7 @@
                 retries++;
             }
             
-            // Use the NewsletterManager from newsletter.js if available
+            // Use the NewsletterManager from newsletter-serverless.js if available
             if (typeof newsletterManager !== 'undefined') {
                 // Wait for subscribers to be loaded from cloud
                 await newsletterManager.loadSubscribers();
