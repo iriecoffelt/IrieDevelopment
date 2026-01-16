@@ -135,6 +135,16 @@ jobs:
           fi
           echo "Files that will be deployed (sample):"
           ls -1 | head -20
+          # Explicitly verify env-config.js is in the list
+          if ls -1 | grep -q "^env-config\.js$"; then
+            echo "✅ env-config.js is in the file list - will be copied"
+          else
+            echo "❌ ERROR: env-config.js NOT in file list!"
+            exit 1
+          fi
+          # Force add to git to ensure it's tracked (even though action copies from filesystem)
+          # This helps ensure git doesn't exclude it during add --all
+          git add -f env-config.js 2>/dev/null || echo "Note: git add -f (file will be copied by action)"
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
@@ -148,6 +158,26 @@ jobs:
           force_orphan: false
           allow_empty_commit: true
           exclude_assets: ""
+
+      # Verify env-config.js was deployed
+      - name: Verify env-config.js deployment
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Checking if env-config.js was deployed..."
+          sleep 5  # Wait for GitHub Pages to update
+          # Check the gh-pages branch
+          git fetch origin gh-pages:gh-pages || true
+          git checkout gh-pages || true
+          if [ -f "env-config.js" ]; then
+            echo "✅ SUCCESS: env-config.js is in gh-pages branch"
+            ls -la env-config.js
+          else
+            echo "❌ ERROR: env-config.js NOT found in gh-pages branch!"
+            echo "Files in gh-pages:"
+            ls -1 | head -20
+            exit 1
+          fi
+          git checkout main || true
 
       # Example: Deploy to other hosting services
       - name: Deploy to custom server (example)
