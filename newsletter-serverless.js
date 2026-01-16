@@ -273,6 +273,59 @@ class NewsletterManager {
     return this.newsletterSends || 0;
   }
 
+  // Get historical data for chart (returns array of {date, count, timestamp} objects)
+  async getHistoricalDataForChart(days = 30) {
+    try {
+      // First, try to load fresh data from API if not already loaded
+      if (!this.subscribers || this.subscribers.length === 0) {
+        await this.loadSubscribers();
+      }
+      
+      // Get historical data from localStorage (cached from API)
+      const storedHistoricalData = localStorage.getItem('newsletter_historical_data');
+      let historicalData = storedHistoricalData ? JSON.parse(storedHistoricalData) : [];
+      
+      // If no historical data, try fetching fresh from API
+      if (!historicalData || historicalData.length === 0) {
+        const apiData = await this.fetchFromServerlessAPI();
+        if (apiData && apiData.historicalData && Array.isArray(apiData.historicalData)) {
+          historicalData = apiData.historicalData;
+          localStorage.setItem('newsletter_historical_data', JSON.stringify(historicalData));
+        }
+      }
+      
+      // Ensure we have an array
+      if (!Array.isArray(historicalData)) {
+        historicalData = [];
+      }
+      
+      // Sort by date (oldest first)
+      historicalData.sort((a, b) => {
+        const dateA = a.date || a.timestamp || '';
+        const dateB = b.date || b.timestamp || '';
+        return dateA.localeCompare(dateB);
+      });
+      
+      // If days parameter is provided, filter to last N days
+      if (days && days > 0) {
+        const today = new Date();
+        const cutoffDate = new Date(today);
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+        const cutoffDateStr = cutoffDate.toISOString().split('T')[0];
+        
+        historicalData = historicalData.filter(item => {
+          const itemDate = item.date || (item.timestamp ? item.timestamp.split('T')[0] : '');
+          return itemDate >= cutoffDateStr;
+        });
+      }
+      
+      return historicalData;
+    } catch (error) {
+      console.error('Error getting historical data for chart:', error);
+      return [];
+    }
+  }
+
   // Track newsletter send - increments count and saves to API
   async trackNewsletterSend(recipientCount = 0) {
     // Increment the newsletter sends count
