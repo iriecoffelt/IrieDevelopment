@@ -153,6 +153,7 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
+          publish_branch: gh-pages # Explicitly set branch to deploy to
           cname: true
           keep_files: false
           force_orphan: false
