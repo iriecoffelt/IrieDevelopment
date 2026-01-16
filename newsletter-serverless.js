@@ -12,7 +12,7 @@ class NewsletterManager {
     // Serverless API endpoint - UPDATE THIS with your Vercel/Netlify URL
     // Example: 'https://your-project.vercel.app/api'
     // Or: 'https://your-project.netlify.app/.netlify/functions'
-    this.serverlessApiUrl = window.SERVERLESS_API_URL || 'https://your-project.vercel.app/api';
+    this.serverlessApiUrl = window.SERVERLESS_API_URL || 'https://irie-development.vercel.app/api';
     
     // EmailJS configuration - can still use env-config.js or hardcoded fallbacks
     const envConfig = window.ENV_CONFIG || {};
