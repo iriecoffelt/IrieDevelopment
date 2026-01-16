@@ -75,6 +75,19 @@ export default async function handler(req, res) {
     const result = await response.json();
     const data = result.record || result;
 
+    // Check if bin contains apps data instead of subscribers (wrong bin type)
+    if (data.apps && Array.isArray(data.apps) && !data.subscribers) {
+      console.warn('WARNING: Bin contains apps data, not subscribers. Initializing with empty subscribers structure.');
+      // Return empty subscribers structure (bin will be initialized on first save)
+      return res.status(200).json({
+        subscribers: [],
+        historicalData: [],
+        newsletterSends: 0,
+        lastUpdated: new Date().toISOString(),
+        count: 0
+      });
+    }
+
     // Handle both old format (array) and new format (object)
     let responseData;
     if (Array.isArray(data)) {
@@ -88,12 +101,14 @@ export default async function handler(req, res) {
       };
     } else {
       // New format - object with subscribers, historicalData, and newsletterSends
+      // Only use count if subscribers array exists, otherwise calculate from subscribers length
+      const subscribersArray = data.subscribers || [];
       responseData = {
-        subscribers: data.subscribers || [],
+        subscribers: subscribersArray,
         historicalData: data.historicalData || [],
         newsletterSends: data.newsletterSends || 0,
         lastUpdated: data.lastUpdated || new Date().toISOString(),
-        count: data.count || (data.subscribers ? data.subscribers.length : 0)
+        count: subscribersArray.length // Always use actual subscribers array length
       };
     }
 
