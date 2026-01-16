@@ -6,3 +6,5 @@ appengine-generated/
 *.bak
 
 # Environment config files (if generated)
+.vercel
+.env*.local
