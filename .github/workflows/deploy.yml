@@ -29,8 +29,8 @@ jobs:
         with:
           node-version: "20"
 
-      # Example: Use secrets to create a config file
-      # This is useful if you need to inject secrets during build
+      # Create environment config file with secrets
+      # This file will be deployed to GitHub Pages
       - name: Create environment config
         run: |
           cat > env-config.js << EOF
@@ -44,6 +44,10 @@ jobs:
             jsonbinBinId: '${{ secrets.JSONBIN_BIN_ID }}'
           };
           EOF
+          # Verify file was created and contains content
+          ls -la env-config.js
+          echo "File size: $(wc -c < env-config.js) bytes"
+          echo "✅ env-config.js created successfully"
         # Note: Secrets are automatically available via ${{ secrets.SECRET_NAME }}
         # They are masked in logs for security
 
@@ -81,6 +85,22 @@ jobs:
             -d '{"message":"Update subscribers","content":"'$(base64 -w 0 data/subscribers.json)'","sha":"'$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json | jq -r .sha)'"}' \
             https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json
 
+      # Ensure env-config.js is included in deployment
+      # The file is in .gitignore to prevent committing to main branch,
+      # but we need it deployed to gh-pages
+      - name: Prepare env-config.js for deployment
+        run: |
+          if [ -f "env-config.js" ]; then
+            echo "✅ env-config.js exists"
+            # Temporarily remove from .gitignore so it gets deployed
+            sed -i.bak '/^env-config\.js$/d' .gitignore || true
+            echo "Temporarily removed env-config.js from .gitignore for deployment"
+            echo "File will be deployed to gh-pages"
+          else
+            echo "❌ ERROR: env-config.js not found!"
+            exit 1
+          fi
+
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
@@ -91,7 +111,6 @@ jobs:
           cname: true
           keep_files: false
           force_orphan: false
-          # Allow creating gh-pages branch if it doesn't exist
           allow_empty_commit: true
 
       # Example: Deploy to other hosting services
