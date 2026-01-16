@@ -2502,29 +2502,26 @@
             refreshBtn.textContent = '⏳ Loading...';
 
             try {
-                // Try to load apps from JSONBin
-                // SECURITY NOTE: Apps data should use a serverless API endpoint (to be created)
-                // For now, this will fail if no access key is configured in localStorage
-                const binId = localStorage.getItem('apps_bin_id') || '69670ee1d0ea881f406a814c'; // Public apps bin
-                const accessKey = localStorage.getItem('jsonbin_access_key'); // Get from localStorage, no hardcoded fallback
+                // Load apps from serverless API (secure, no hardcoded secrets)
+                const apiUrl = window.SERVERLESS_API_URL || 'https://irie-development.vercel.app/api';
                 
-                if (!accessKey) {
-                    console.warn('⚠️ JSONBin access key not configured. Apps data cannot be loaded.');
-                    apps = getDefaultApps();
-                    return;
-                }
-                
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+                const response = await fetch(`${apiUrl}/apps`, {
+                    method: 'GET',
                     headers: {
-                        'X-Access-Key': accessKey
+                        'Content-Type': 'application/json'
                     },
                     cache: 'no-store'
                 });
 
                 if (response.ok) {
                     const result = await response.json();
-                    const data = result.record || result;
-                    apps = data.apps || [];
+                    apps = result.apps || [];
+                    
+                    if (apps.length === 0) {
+                        // No apps yet, initialize with default apps
+                        apps = getDefaultApps();
+                        await saveApps();
+                    }
                 } else if (response.status === 404) {
                     // Bin doesn't exist yet, initialize with default apps
                     apps = getDefaultApps();
@@ -2624,39 +2621,26 @@
         // Save apps to cloud storage and local file
         async function saveApps() {
             try {
-                // Use the public apps bin ID
-                // SECURITY NOTE: Apps data should use a serverless API endpoint (to be created)
-                // For now, this will fail if no access key is configured in localStorage
-                const binId = localStorage.getItem('apps_bin_id') || '69670ee1d0ea881f406a814c';
-                const accessKey = localStorage.getItem('jsonbin_access_key'); // Get from localStorage, no hardcoded fallback
+                // Save apps using serverless API (secure, no hardcoded secrets)
+                const apiUrl = window.SERVERLESS_API_URL || 'https://irie-development.vercel.app/api';
                 
-                if (!accessKey) {
-                    console.warn('⚠️ JSONBin access key not configured. Apps data cannot be saved.');
-                    throw new Error('JSONBin access key required');
-                }
-                
-                const data = {
-                    apps: apps,
-                    lastUpdated: new Date().toISOString(),
-                    count: apps.length
-                };
-
-                // Save to JSONBin (requires access key to write)
-                const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                    method: 'PUT',
+                const response = await fetch(`${apiUrl}/apps-save`, {
+                    method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-Access-Key': accessKey
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify({
+                        apps: apps
+                    })
                 });
 
                 if (!response.ok) {
-                    throw new Error(`Failed to update JSONBin: ${response.status}`);
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`Failed to save apps: ${response.status} - ${errorData.message || response.statusText}`);
                 }
 
-                // Store bin ID for future use
-                localStorage.setItem('apps_bin_id', binId);
+                const result = await response.json();
+                console.log('✅ Apps saved successfully:', result);
 
                 // Also save to local file for public access (no auth needed)
                 // Note: This requires server-side write capability or manual upload
