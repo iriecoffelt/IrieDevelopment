@@ -239,32 +239,81 @@ class NewsletterManager {
   // Send welcome email via EmailJS
   async sendWelcomeEmail(email) {
     try {
-      const templateParams = {
-        to_email: email,
-        to_name: email.split('@')[0],
-        from_name: 'Irie Development',
-        message: 'Welcome to our newsletter!'
-      };
+      // Use EmailJS SDK if available (preferred method)
+      // Fallback to direct API if SDK not loaded
+      if (typeof emailjs !== 'undefined' && emailjs.send) {
+        const templateParams = {
+          from_email: email, // Used for "To Email" field (recipient)
+          from_name: email.split('@')[0], // Subscriber's name
+          to_email: email, // Also include for compatibility
+          to_name: email.split('@')[0],
+          message: 'Welcome to our newsletter!'
+        };
 
-      const response = await fetch(this.apiEndpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          service_id: this.serviceId,
-          template_id: this.templateId,
-          user_id: this.userId,
-          template_params: templateParams
-        })
-      });
+        const response = await emailjs.send(
+          this.serviceId,
+          this.templateId,
+          templateParams
+        );
 
-      if (response.ok) {
-        console.log('✅ Welcome email sent to:', email);
-        return true;
+        if (response.status === 200) {
+          console.log('✅ Welcome email sent to:', email);
+          return true;
+        } else {
+          console.warn('⚠️ EmailJS SDK returned non-200 status:', response.status);
+          return false;
+        }
       } else {
-        console.warn('⚠️ Failed to send welcome email:', response.status);
-        return false;
+        // Fallback to direct API call
+        console.warn('EmailJS SDK not available, using direct API call');
+        const templateParams = {
+          from_email: email,
+          from_name: email.split('@')[0],
+          to_email: email,
+          to_name: email.split('@')[0],
+          message: 'Welcome to our newsletter!'
+        };
+
+        const response = await fetch(this.apiEndpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            service_id: this.serviceId,
+            template_id: this.templateId,
+            user_id: this.userId,
+            template_params: templateParams
+          })
+        });
+
+        if (response.ok) {
+          console.log('✅ Welcome email sent to:', email);
+          return true;
+        } else {
+          // Get detailed error response
+          let errorDetails = 'Unknown error';
+          try {
+            const errorData = await response.json();
+            errorDetails = JSON.stringify(errorData, null, 2);
+            console.error('❌ EmailJS Error Response:', errorData);
+          } catch (e) {
+            try {
+              errorDetails = await response.text();
+              console.error('❌ EmailJS Error Text:', errorDetails);
+            } catch (e2) {
+              console.error('❌ Could not parse error response');
+            }
+          }
+          
+          console.warn('⚠️ Failed to send welcome email:', {
+            status: response.status,
+            statusText: response.statusText,
+            error: errorDetails
+          });
+          
+          return false;
+        }
       }
     } catch (error) {
       console.error('Error sending welcome email:', error);
