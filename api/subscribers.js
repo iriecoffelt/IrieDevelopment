@@ -31,11 +31,17 @@ export default async function handler(req, res) {
 
   try {
     // Get secrets from environment variables (set in Vercel dashboard)
-    const jsonBinAccessKey = process.env.JSONBIN_ACCESS_KEY;
-    const jsonBinBinId = process.env.JSONBIN_BIN_ID;
+    // Trim whitespace to prevent issues
+    const jsonBinAccessKey = (process.env.JSONBIN_ACCESS_KEY || '').trim();
+    const jsonBinBinId = (process.env.JSONBIN_BIN_ID || '').trim();
 
     if (!jsonBinAccessKey || !jsonBinBinId) {
-      console.error('Missing environment variables');
+      console.error('Missing environment variables:', {
+        hasAccessKey: !!jsonBinAccessKey,
+        hasBinId: !!jsonBinBinId,
+        accessKeyLength: jsonBinAccessKey.length,
+        binIdLength: jsonBinBinId.length
+      });
       return res.status(500).json({ 
         error: 'Server configuration error',
         message: 'JSONBin credentials not configured'
