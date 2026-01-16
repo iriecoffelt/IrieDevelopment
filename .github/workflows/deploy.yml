@@ -14,10 +14,12 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Auto-cancel if workflow runs longer than 15 minutes
+    timeout-minutes: 15 # Auto-cancel if workflow runs longer than 15 minutes
     permissions:
       contents: write
-    
+      pages: write
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,7 +27,7 @@ jobs:
       - name: Setup Node.js (if needed for build tools)
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       # Example: Use secrets to create a config file
       # This is useful if you need to inject secrets during build
@@ -60,7 +62,7 @@ jobs:
           chmod +x scripts/inject-secrets.sh
           # Run injection script
           ./scripts/inject-secrets.sh
-          
+
           # Alternative: Direct sed replacement (uncomment if not using script)
           # sed -i "s|{{EMAILJS_USER_ID}}|${{ secrets.EMAILJS_USER_ID }}|g" newsletter.js
           # sed -i "s|{{EMAILJS_SERVICE_ID}}|${{ secrets.EMAILJS_SERVICE_ID }}|g" newsletter.js
@@ -79,7 +81,7 @@ jobs:
             -d '{"message":"Update subscribers","content":"'$(base64 -w 0 data/subscribers.json)'","sha":"'$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json | jq -r .sha)'"}' \
             https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json
 
-      # Example: Deploy to GitHub Pages
+      # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
@@ -87,6 +89,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
           cname: true
+          keep_files: false
+          force_orphan: false
 
       # Example: Deploy to other hosting services
       - name: Deploy to custom server (example)
