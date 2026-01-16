@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   try {
     // Get secrets from environment variables (set in Vercel dashboard)
     const jsonBinAccessKey = (process.env.JSONBIN_ACCESS_KEY || '').trim();
-    // Apps bin ID: 69670ee1d0ea881f406a814c
+    // Apps bin ID: 69670ee1d0ea881f406a814c (public - contains apps data)
     const appsBinId = (process.env.JSONBIN_APPS_BIN_ID || process.env.JSONBIN_BIN_ID || '').trim() || '69670ee1d0ea881f406a814c';
 
     if (!jsonBinAccessKey) {
