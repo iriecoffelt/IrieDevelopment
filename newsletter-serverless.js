@@ -1,6 +1,7 @@
 // Newsletter Management System with Serverless API (Secure)
 // This version uses serverless functions to keep secrets secure on the server
 // Replace newsletter.js with this file after setting up your serverless functions
+// Version: 2026-01-16 - Added getHistoricalDataForChart method
 
 class NewsletterManager {
   constructor() {
