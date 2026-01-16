@@ -1,0 +1,162 @@
+name: Deploy Website
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering
+
+# Prevent multiple concurrent runs - cancels older runs when new one starts
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15 # Auto-cancel if workflow runs longer than 15 minutes
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js (if needed for build tools)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # Create environment config file with secrets
+      # This file will be deployed to GitHub Pages
+      - name: Create environment config
+        run: |
+          cat > env-config.js << EOF
+          // This file is generated during deployment
+          // DO NOT commit secrets directly to the repository
+          window.ENV_CONFIG = {
+            emailjsUserId: '${{ secrets.EMAILJS_USER_ID }}',
+            emailjsServiceId: '${{ secrets.EMAILJS_SERVICE_ID }}',
+            emailjsTemplateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}',
+            jsonbinAccessKey: '${{ secrets.JSONBIN_ACCESS_KEY }}',
+            jsonbinBinId: '${{ secrets.JSONBIN_BIN_ID }}'
+          };
+          EOF
+          # Verify file was created and contains content
+          ls -la env-config.js
+          echo "File size: $(wc -c < env-config.js) bytes"
+          echo "✅ env-config.js created successfully"
+        # Note: Secrets are automatically available via ${{ secrets.SECRET_NAME }}
+        # They are masked in logs for security
+
+      # Inject secrets into newsletter.js (if using placeholders)
+      # Uncomment this step if you've updated newsletter.js to use placeholders
+      - name: Inject secrets into newsletter.js
+        if: false # Set to true if you want to enable secret injection
+        env:
+          EMAILJS_USER_ID: ${{ secrets.EMAILJS_USER_ID }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+          JSONBIN_ACCESS_KEY: ${{ secrets.JSONBIN_ACCESS_KEY }}
+          JSONBIN_BIN_ID: ${{ secrets.JSONBIN_BIN_ID }}
+        run: |
+          # Make script executable
+          chmod +x scripts/inject-secrets.sh
+          # Run injection script
+          ./scripts/inject-secrets.sh
+
+          # Alternative: Direct sed replacement (uncomment if not using script)
+          # sed -i "s|{{EMAILJS_USER_ID}}|${{ secrets.EMAILJS_USER_ID }}|g" newsletter.js
+          # sed -i "s|{{EMAILJS_SERVICE_ID}}|${{ secrets.EMAILJS_SERVICE_ID }}|g" newsletter.js
+          # sed -i "s|{{EMAILJS_TEMPLATE_ID}}|${{ secrets.EMAILJS_TEMPLATE_ID }}|g" newsletter.js
+          # sed -i "s|{{JSONBIN_ACCESS_KEY}}|${{ secrets.JSONBIN_ACCESS_KEY }}|g" newsletter.js
+          # sed -i "s|{{JSONBIN_BIN_ID}}|${{ secrets.JSONBIN_BIN_ID }}|g" newsletter.js
+
+      # Example: Use GitHub API with secrets to update files
+      - name: Update subscribers file via GitHub API
+        if: false # Set to true if you want to enable this
+        run: |
+          # This example shows how to use secrets with GitHub API
+          curl -X PUT \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"message":"Update subscribers","content":"'$(base64 -w 0 data/subscribers.json)'","sha":"'$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json | jq -r .sha)'"}' \
+            https://api.github.com/repos/${{ github.repository }}/contents/data/subscribers.json
+
+      # Ensure env-config.js is included in deployment
+      # The file is in .gitignore to prevent committing to main branch,
+      # but we need it deployed to gh-pages
+      - name: Prepare env-config.js for deployment
+        run: |
+          if [ -f "env-config.js" ]; then
+            echo "✅ env-config.js exists"
+            # Temporarily remove from .gitignore so it gets deployed
+            sed -i.bak '/^env-config\.js$/d' .gitignore || true
+            # Also remove any .bak files created by sed
+            rm -f .gitignore.bak || true
+            echo "Temporarily removed env-config.js from .gitignore for deployment"
+            # Verify the file exists and has content
+            ls -la env-config.js
+            echo "File size: $(wc -c < env-config.js) bytes"
+            echo "File will be deployed to gh-pages"
+          else
+            echo "❌ ERROR: env-config.js not found!"
+            exit 1
+          fi
+
+      # Ensure env-config.js is tracked and will be deployed
+      - name: Ensure env-config.js is included in deployment
+        run: |
+          if [ -f "env-config.js" ]; then
+            echo "✅ env-config.js exists"
+            # Remove from .gitignore
+            sed -i.bak '/^env-config\.js$/d' .gitignore || true
+            rm -f .gitignore.bak || true
+            # Force add to git so it gets deployed (even though it's normally ignored)
+            git add -f env-config.js || true
+            git status --short | grep env-config || echo "File added to git"
+            echo "✅ env-config.js prepared for deployment"
+          else
+            echo "❌ ERROR: env-config.js not found!"
+            exit 1
+          fi
+
+      # Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          cname: true
+          keep_files: false
+          force_orphan: false
+          allow_empty_commit: true
+          exclude_assets: ""
+
+      # Example: Deploy to other hosting services
+      - name: Deploy to custom server (example)
+        if: false # Set to true and configure if needed
+        run: |
+          # Example: Use secrets for FTP/SSH deployment
+          # lftp -u ${{ secrets.FTP_USER }},${{ secrets.FTP_PASSWORD }} -e "mirror -R ./ /public_html/; quit" ${{ secrets.FTP_HOST }}
+          echo "Configure your deployment command here"
+
+      # Example: Send notification using secrets
+      - name: Send deployment notification
+        if: false # Set to true if you want notifications
+        run: |
+          # Example: Send email notification using EmailJS API
+          curl -X POST https://api.emailjs.com/api/v1.0/email/send \
+            -H "Content-Type: application/json" \
+            -d '{
+              "service_id": "${{ secrets.EMAILJS_SERVICE_ID }}",
+              "template_id": "${{ secrets.EMAILJS_TEMPLATE_ID }}",
+              "user_id": "${{ secrets.EMAILJS_USER_ID }}",
+              "template_params": {
+                "message": "Website deployed successfully",
+                "deployment_time": "'$(date)'"
+              }
+            }'
