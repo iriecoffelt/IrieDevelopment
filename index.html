@@ -209,8 +209,16 @@
               attempts++;
             }
             
+            // If still not available, try to initialize it directly
             if (!window.newsletterManager) {
-              throw new Error('Newsletter manager not available. Please refresh the page.');
+              console.warn('NewsletterManager not found, attempting to initialize...');
+              // Check if NewsletterManager class is available
+              if (typeof NewsletterManager !== 'undefined') {
+                window.newsletterManager = new NewsletterManager();
+                console.log('✅ NewsletterManager initialized from form handler');
+              } else {
+                throw new Error('Newsletter manager not available. Please refresh the page.');
+              }
             }
             
             console.log('Adding subscriber:', email);
