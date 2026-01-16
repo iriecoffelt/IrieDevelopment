@@ -5,6 +5,7 @@
 class NewsletterManager {
   constructor() {
     this.subscribers = [];
+    this.newsletterSends = 0; // Newsletter sends count from API
     this.apiEndpoint = 'https://api.emailjs.com/api/v1.0/email/send';
     
     // Serverless API endpoint - UPDATE THIS with your Vercel/Netlify URL
@@ -54,11 +55,11 @@ class NewsletterManager {
             console.log('✅ Loaded historical data:', cloudData.historicalData.length, 'data points');
           }
           
-          // Store newsletter sends count if available
-          if (cloudData.newsletterSends !== undefined) {
-            localStorage.setItem('newsletter_sends_count', cloudData.newsletterSends.toString());
-            console.log('✅ Loaded newsletter sends count:', cloudData.newsletterSends);
-          }
+          // Store newsletter sends count from API
+          this.newsletterSends = cloudData.newsletterSends || 0;
+          // Also cache to localStorage as fallback
+          localStorage.setItem('newsletter_sends_count', this.newsletterSends.toString());
+          console.log('✅ Loaded newsletter sends count:', this.newsletterSends);
         } else {
           console.warn('⚠️ Unexpected data format from serverless API:', cloudData);
           this.subscribers = [];
@@ -111,12 +112,12 @@ class NewsletterManager {
   // Save subscribers via serverless API (secure)
   async saveToServerlessAPI(subscribers) {
     try {
-      // Get existing historical data and newsletter sends from localStorage
+      // Get existing historical data from localStorage (or use class property if available)
       const storedHistoricalData = localStorage.getItem('newsletter_historical_data');
       const historicalData = storedHistoricalData ? JSON.parse(storedHistoricalData) : [];
       
-      const storedSends = localStorage.getItem('newsletter_sends_count');
-      const newsletterSends = parseInt(storedSends, 10) || 0;
+      // Use newsletter sends count from class property (loaded from API), fallback to localStorage
+      const newsletterSends = this.newsletterSends || parseInt(localStorage.getItem('newsletter_sends_count'), 10) || 0;
 
       const response = await fetch(`${this.serverlessApiUrl}/subscribers-save`, {
         method: 'POST',
@@ -156,9 +157,14 @@ class NewsletterManager {
         this.subscribers = [];
         console.log('No subscribers found in localStorage');
       }
+      
+      // Also load newsletter sends count from localStorage as fallback
+      const storedSends = localStorage.getItem('newsletter_sends_count');
+      this.newsletterSends = parseInt(storedSends, 10) || 0;
     } catch (error) {
       console.error('Error loading from localStorage:', error);
       this.subscribers = [];
+      this.newsletterSends = 0;
     }
   }
 
@@ -260,6 +266,53 @@ class NewsletterManager {
   // Get subscriber count
   getSubscriberCount() {
     return this.subscribers.length;
+  }
+
+  // Get newsletter sends count (from API data, not localStorage)
+  getNewsletterSendsCount() {
+    return this.newsletterSends || 0;
+  }
+
+  // Track newsletter send - increments count and saves to API
+  async trackNewsletterSend(recipientCount = 0) {
+    // Increment the newsletter sends count
+    this.newsletterSends = (this.newsletterSends || 0) + 1;
+    
+    // Save updated count to API (preserve subscribers and historical data)
+    try {
+      const saved = await this.saveToServerlessAPI(this.subscribers);
+      if (saved) {
+        console.log(`✅ Newsletter send tracked: ${this.newsletterSends} total sends`);
+        return true;
+      } else {
+        console.warn('⚠️ Failed to save newsletter send count to API');
+        return false;
+      }
+    } catch (error) {
+      console.error('Error tracking newsletter send:', error);
+      return false;
+    }
+  }
+
+  // Save subscribers (updates the list and saves to API)
+  async saveSubscribers(subscribers) {
+    if (!Array.isArray(subscribers)) {
+      throw new Error('Subscribers must be an array');
+    }
+    
+    // Update the subscribers array
+    this.subscribers = subscribers;
+    
+    // Save to serverless API
+    const saved = await this.saveToServerlessAPI(subscribers);
+    if (!saved) {
+      console.warn('⚠️ Failed to save to serverless API, but subscribers updated locally');
+    }
+    
+    // Also update localStorage as cache
+    localStorage.setItem('newsletter_subscribers', JSON.stringify(subscribers));
+    
+    return saved;
   }
 
   // Get all subscribers
