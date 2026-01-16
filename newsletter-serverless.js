@@ -21,7 +21,17 @@ class NewsletterManager {
     // Note: JSONBin credentials are now stored server-side in your serverless functions
     // They are never exposed to the browser
     
-    this.loadSubscribers();
+    // Only auto-load subscribers on admin pages (not on homepage)
+    // Check if we're on an admin page by looking for admin-specific elements or URL
+    const isAdminPage = window.location.pathname.includes('admin') || 
+                        window.location.pathname.includes('send_newsletter') ||
+                        document.getElementById('admin-dashboard') !== null ||
+                        document.querySelector('.admin-panel') !== null;
+    
+    if (isAdminPage) {
+      this.loadSubscribers();
+    }
+    // Otherwise, subscribers will be loaded on-demand when needed
   }
 
   // Load subscribers from serverless API (secure)
@@ -160,6 +170,11 @@ class NewsletterManager {
       throw new Error('Invalid email address');
     }
     
+    // Load subscribers if not already loaded (for homepage form submissions)
+    if (this.subscribers.length === 0) {
+      await this.loadSubscribers();
+    }
+    
     if (this.subscribers.includes(email)) {
       throw new Error('Email already subscribed');
     }
@@ -262,14 +277,35 @@ class NewsletterManager {
 }
 
 // Initialize newsletter manager when DOM is ready
+// Only auto-initialize on admin pages or if explicitly requested
 let newsletterManager;
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
+// Check if we're on an admin page
+const isAdminPage = window.location.pathname.includes('admin') || 
+                    window.location.pathname.includes('send_newsletter') ||
+                    document.getElementById('admin-dashboard') !== null ||
+                    document.querySelector('.admin-panel') !== null;
+
+// Only auto-initialize on admin pages
+// On homepage, initialization will happen on-demand when newsletter form is submitted
+if (isAdminPage) {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      newsletterManager = new NewsletterManager();
+    });
+  } else {
     newsletterManager = new NewsletterManager();
-  });
+  }
 } else {
-  newsletterManager = new NewsletterManager();
+  // On homepage, create manager but don't auto-load subscribers
+  // Subscribers will be loaded on-demand when needed (e.g., form submission)
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      newsletterManager = new NewsletterManager();
+    });
+  } else {
+    newsletterManager = new NewsletterManager();
+  }
 }
 
 // Export for use in other scripts
