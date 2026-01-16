@@ -1,0 +1,9 @@
+{
+  "name": "irie-development",
+  "version": "1.0.0",
+  "description": "Irie Development website with serverless API functions",
+  "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  }
+}
