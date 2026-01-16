@@ -88,40 +88,53 @@ jobs:
       # Ensure env-config.js is included in deployment
       # The file is in .gitignore to prevent committing to main branch,
       # but we need it deployed to gh-pages
+      # The peaceiris/actions-gh-pages action copies from filesystem, so we need to
+      # ensure .gitignore doesn't exclude it when copying
       - name: Prepare env-config.js for deployment
         run: |
           if [ -f "env-config.js" ]; then
             echo "✅ env-config.js exists"
-            # Temporarily remove from .gitignore so it gets deployed
+            # Completely remove env-config.js from .gitignore
+            # Use multiple methods to ensure it's removed
+            grep -v "^env-config\.js$" .gitignore > .gitignore.tmp && mv .gitignore.tmp .gitignore || true
+            # Also try sed as backup
             sed -i.bak '/^env-config\.js$/d' .gitignore || true
-            # Also remove any .bak files created by sed
             rm -f .gitignore.bak || true
+            # Verify it's removed
+            if grep -q "^env-config\.js$" .gitignore 2>/dev/null; then
+              echo "⚠️ WARNING: Still in .gitignore, trying again..."
+              grep -v "^env-config\.js$" .gitignore > .gitignore.new && mv .gitignore.new .gitignore
+            fi
             echo "Temporarily removed env-config.js from .gitignore for deployment"
             # Verify the file exists and has content
             ls -la env-config.js
             echo "File size: $(wc -c < env-config.js) bytes"
+            # Verify .gitignore doesn't contain it
+            echo "Checking .gitignore:"
+            grep "env-config" .gitignore || echo "✅ env-config.js not in .gitignore"
             echo "File will be deployed to gh-pages"
           else
             echo "❌ ERROR: env-config.js not found!"
             exit 1
           fi
 
-      # Ensure env-config.js is tracked and will be deployed
-      - name: Ensure env-config.js is included in deployment
+      # Final verification before deployment
+      - name: Verify env-config.js will be deployed
         run: |
-          if [ -f "env-config.js" ]; then
-            echo "✅ env-config.js exists"
-            # Remove from .gitignore
-            sed -i.bak '/^env-config\.js$/d' .gitignore || true
-            rm -f .gitignore.bak || true
-            # Force add to git so it gets deployed (even though it's normally ignored)
-            git add -f env-config.js || true
-            git status --short | grep env-config || echo "File added to git"
-            echo "✅ env-config.js prepared for deployment"
-          else
-            echo "❌ ERROR: env-config.js not found!"
+          echo "Final check before deployment:"
+          ls -la env-config.js
+          echo "File contents (first 3 lines):"
+          head -3 env-config.js
+          echo "Checking if file is in .gitignore:"
+          if grep -q "^env-config\.js$" .gitignore 2>/dev/null; then
+            echo "❌ ERROR: env-config.js is still in .gitignore!"
+            cat .gitignore | grep env-config || echo "Not found in .gitignore"
             exit 1
+          else
+            echo "✅ env-config.js is NOT in .gitignore - will be deployed"
           fi
+          echo "Files that will be deployed (sample):"
+          ls -1 | head -20
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
