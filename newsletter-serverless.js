@@ -423,9 +423,13 @@ const isAdminPage = window.location.pathname.includes('admin') ||
 // Initialize immediately if DOM is ready, otherwise wait for DOMContentLoaded
 function setupNewsletterManager() {
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeNewsletterManager);
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log('DOMContentLoaded fired, initializing NewsletterManager...');
+      initializeNewsletterManager();
+    });
   } else {
     // DOM is already ready, initialize immediately
+    console.log('DOM already ready, initializing NewsletterManager immediately...');
     initializeNewsletterManager();
   }
 }
@@ -433,10 +437,35 @@ function setupNewsletterManager() {
 // Always initialize (subscribers will only auto-load on admin pages)
 setupNewsletterManager();
 
-// Fallback: ensure it's initialized after a short delay (in case DOMContentLoaded already fired)
+// Multiple fallbacks to ensure initialization
+// Fallback 1: Check after 100ms
 setTimeout(() => {
   if (!window.newsletterManager) {
-    console.warn('NewsletterManager not initialized, initializing now...');
+    console.warn('⚠️ NewsletterManager not initialized after 100ms, initializing now...');
     initializeNewsletterManager();
   }
 }, 100);
+
+// Fallback 2: Check after 500ms
+setTimeout(() => {
+  if (!window.newsletterManager) {
+    console.warn('⚠️ NewsletterManager not initialized after 500ms, initializing now...');
+    initializeNewsletterManager();
+  }
+}, 500);
+
+// Fallback 3: Check after 1 second (last resort)
+setTimeout(() => {
+  if (!window.newsletterManager) {
+    console.error('❌ NewsletterManager failed to initialize after 1 second!');
+    console.error('Attempting final initialization...');
+    initializeNewsletterManager();
+  } else {
+    console.log('✅ NewsletterManager confirmed initialized');
+  }
+}, 1000);
+
+// Export NewsletterManager class globally so it can be instantiated manually if needed
+if (typeof window !== 'undefined') {
+  window.NewsletterManager = NewsletterManager;
+}
