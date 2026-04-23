@@ -1,38 +1,178 @@
-// Vercel Serverless Function: Get Subscribers
-// This function retrieves subscribers from JSONBin.io
-// Secrets are stored in Vercel environment variables, never exposed to the browser
+// GET: list (optional Bearer) | POST { email } only: public one-address subscribe
+import { setCorsForSubscriberRoutes, guardSubscribersApi } from './lib/subscriber-api-common.js';
 
-export default async function handler(req, res) {
-  // CORS headers - allow requests from your domain
-  const allowedOrigins = [
-    'https://www.irie-development.com',
-    'https://irie-development.com',
-    'http://localhost:3000',
-    'http://localhost:8080'
-  ];
+function isValidSubscribeEmail(s) {
+  return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}
 
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+function normalizeRecordForSubscribe(data) {
+  if (Array.isArray(data)) {
+    return {
+      subscribers: data.map((e) => String(e).toLowerCase().trim()),
+      historicalData: [],
+      newsletterSends: 0,
+    };
+  }
+  const subs = Array.isArray(data.subscribers)
+    ? data.subscribers.map((e) => String(e).toLowerCase().trim())
+    : [];
+  return {
+    subscribers: subs,
+    historicalData: Array.isArray(data.historicalData) ? [...data.historicalData] : [],
+    newsletterSends: typeof data.newsletterSends === 'number' ? data.newsletterSends : 0,
+  };
+}
+
+function buildSnapshotForSubscribers(historicalData, subscriberCount) {
+  const today = new Date().toISOString().split('T')[0];
+  let processed = Array.isArray(historicalData) ? [...historicalData] : [];
+  const todaySnapshot = processed.find((s) => s.date === today);
+  if (!todaySnapshot || todaySnapshot.count !== subscriberCount) {
+    const existingIndex = processed.findIndex((s) => s.date === today);
+    const snapshot = {
+      date: today,
+      count: subscriberCount,
+      timestamp: new Date().toISOString(),
+    };
+    if (existingIndex >= 0) {
+      processed[existingIndex] = snapshot;
+    } else {
+      processed.push(snapshot);
+    }
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 90);
+    processed = processed.filter((s) => new Date(s.date) >= cutoffDate);
+    processed.sort((a, b) => new Date(a.date) - new Date(b.date));
+  }
+  return processed;
+}
+
+/** Public: POST { email } — appends one subscriber (no full list in client). */
+async function handlePublicSubscribePost(req, res) {
+  const body = req.body && typeof req.body === 'object' ? req.body : {};
+  if (Array.isArray(body.subscribers)) {
+    return res.status(400).json({
+      error: 'Use POST /api/subscribers-save for full list',
+    });
+  }
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
+  if (!isValidSubscribeEmail(email)) {
+    return res.status(400).json({ error: 'Invalid request', message: 'Valid email is required' });
   }
 
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const jsonBinAccessKey = (process.env.JSONBIN_ACCESS_KEY || '').trim();
+  const jsonBinBinId = (process.env.JSONBIN_BIN_ID || '').trim();
+  if (!jsonBinAccessKey || !jsonBinBinId) {
+    return res.status(500).json({
+      error: 'Server configuration error',
+      message: 'JSONBin credentials not configured',
+    });
+  }
 
-  // Handle preflight requests FIRST (before method check)
+  const response = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinBinId}/latest`, {
+    method: 'GET',
+    headers: {
+      'X-Access-Key': jsonBinAccessKey,
+      Accept: 'application/json',
+    },
+  });
+
+  let record;
+  if (!response.ok) {
+    if (response.status === 404) {
+      record = { subscribers: [], historicalData: [], newsletterSends: 0 };
+    } else {
+      return res.status(500).json({
+        error: 'Failed to read subscribers',
+        message: `JSONBin read error: ${response.status}`,
+      });
+    }
+  } else {
+    const result = await response.json();
+    const raw = result.record;
+    if (raw === undefined || raw === null) {
+      record = { subscribers: [], historicalData: [], newsletterSends: 0 };
+    } else if (raw.apps && Array.isArray(raw.apps) && !raw.subscribers) {
+      return res.status(500).json({
+        error: 'Server configuration error',
+        message: 'Subscriber bin is misconfigured',
+      });
+    } else {
+      record = normalizeRecordForSubscribe(raw);
+    }
+  }
+
+  if (record.subscribers.includes(email)) {
+    return res.status(200).json({
+      ok: true,
+      alreadySubscribed: true,
+      count: record.subscribers.length,
+    });
+  }
+
+  const subscribers = [...record.subscribers, email];
+  const historicalData = buildSnapshotForSubscribers(
+    record.historicalData,
+    subscribers.length
+  );
+  const dataToSave = {
+    subscribers,
+    lastUpdated: new Date().toISOString(),
+    count: subscribers.length,
+    historicalData,
+    newsletterSends: record.newsletterSends || 0,
+  };
+
+  const putResponse = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinBinId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Key': jsonBinAccessKey,
+    },
+    body: JSON.stringify(dataToSave),
+  });
+
+  if (!putResponse.ok) {
+    const errorText = await putResponse.text();
+    return res.status(500).json({
+      error: 'Failed to subscribe',
+      message: `JSONBin save error: ${putResponse.status} - ${errorText}`,
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+    alreadySubscribed: false,
+    count: subscribers.length,
+  });
+}
+
+export default async function handler(req, res) {
+  setCorsForSubscriberRoutes(req, res);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow GET requests
+  if (req.method === 'POST') {
+    try {
+      return await handlePublicSubscribePost(req, res);
+    } catch (err) {
+      console.error('public subscribe POST error:', err);
+      return res.status(500).json({ error: 'Failed to subscribe', message: err.message });
+    }
+  }
+
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  if (!guardSubscribersApi(req, res)) {
+    return;
+  }
+
   try {
-    // Get secrets from environment variables (set in Vercel dashboard)
-    // Trim whitespace to prevent issues
-    // Subscribers bin ID: 6967037143b1c97be92f1730 (private - contains subscribers, historicalData, newsletterSends)
     const jsonBinAccessKey = (process.env.JSONBIN_ACCESS_KEY || '').trim();
     const jsonBinBinId = (process.env.JSONBIN_BIN_ID || '').trim();
 
@@ -49,7 +189,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Fetch from JSONBin.io
     const response = await fetch(`https://api.jsonbin.io/v3/b/${jsonBinBinId}/latest`, {
       method: 'GET',
       headers: {
@@ -60,7 +199,6 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       if (response.status === 404) {
-        // Bin doesn't exist yet - return empty data
         return res.status(200).json({
           subscribers: [],
           historicalData: [],
@@ -75,10 +213,8 @@ export default async function handler(req, res) {
     const result = await response.json();
     const data = result.record || result;
 
-    // Check if bin contains apps data instead of subscribers (wrong bin type)
     if (data.apps && Array.isArray(data.apps) && !data.subscribers) {
       console.warn('WARNING: Bin contains apps data, not subscribers. Initializing with empty subscribers structure.');
-      // Return empty subscribers structure (bin will be initialized on first save)
       return res.status(200).json({
         subscribers: [],
         historicalData: [],
@@ -88,10 +224,8 @@ export default async function handler(req, res) {
       });
     }
 
-    // Handle both old format (array) and new format (object)
     let responseData;
     if (Array.isArray(data)) {
-      // Old format - just an array of emails
       responseData = {
         subscribers: data,
         historicalData: [],
@@ -100,15 +234,13 @@ export default async function handler(req, res) {
         count: data.length
       };
     } else {
-      // New format - object with subscribers, historicalData, and newsletterSends
-      // Only use count if subscribers array exists, otherwise calculate from subscribers length
       const subscribersArray = data.subscribers || [];
       responseData = {
         subscribers: subscribersArray,
         historicalData: data.historicalData || [],
         newsletterSends: data.newsletterSends || 0,
         lastUpdated: data.lastUpdated || new Date().toISOString(),
-        count: subscribersArray.length // Always use actual subscribers array length
+        count: subscribersArray.length
       };
     }
 

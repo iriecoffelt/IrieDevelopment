@@ -41,7 +41,8 @@ jobs:
           window.ENV_CONFIG = {
             emailjsUserId: '${{ secrets.EMAILJS_USER_ID }}',
             emailjsServiceId: '${{ secrets.EMAILJS_SERVICE_ID }}',
-            emailjsTemplateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}'
+            emailjsTemplateId: '${{ secrets.EMAILJS_TEMPLATE_ID }}',
+            subscribersApiKey: '${{ secrets.SUBSCRIBERS_API_KEY }}'
           };
           EOF
           # Verify file was created and contains content

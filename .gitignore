@@ -1,6 +1,3 @@
-# Environment config files (generated during deployment)
-env-config.js
-
 # Vercel
 .vercel
 .env*.local

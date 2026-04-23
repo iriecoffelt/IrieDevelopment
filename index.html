@@ -8,27 +8,23 @@
   <meta name="theme-color" content="#007AFF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <!-- SEO Meta Tags -->
-  <meta name="keywords" content="iOS developer, iPhone apps, iPad apps, Apple Watch apps, Arkansas apps, Sudoku Mindscape, Hidden Secrets of Arkansas, mobile app development, iOS programming">
   <meta name="author" content="Irie Development">
   <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
-  <meta name="revisit-after" content="7 days">
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://iriedevelopment.com/">
+  <meta property="og:url" content="https://irie-development.com/">
   <meta property="og:title" content="Irie Development | iOS App Developer & Arkansas Apps">
   <meta property="og:description" content="Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!">
-  <meta property="og:image" content="https://iriedevelopment.com/og-image.jpg">
+  <meta property="og:image" content="https://irie-development.com/og-image.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:site_name" content="Irie Development">
   <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://iriedevelopment.com/">
-  <meta property="twitter:title" content="Irie Development | iOS App Developer & Arkansas Apps">
-  <meta property="twitter:description" content="Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!">
-  <meta property="twitter:image" content="https://iriedevelopment.com/twitter-image.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://irie-development.com/">
+  <meta name="twitter:title" content="Irie Development | iOS App Developer & Arkansas Apps">
+  <meta name="twitter:description" content="Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!">
+  <meta name="twitter:image" content="https://irie-development.com/twitter-image.jpg">
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -40,7 +36,7 @@
   <link rel="preconnect" href="https://apps.apple.com">
   <link rel="preconnect" href="https://exploringarkansas.myspreadshop.com">
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Fira+Mono:400,700|Montserrat:700,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   
   <!-- Serverless API Configuration -->
@@ -60,9 +56,12 @@
   <!-- EmailJS SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <script>
-      // Use EmailJS User ID from env-config.js if available, otherwise use hardcoded fallback
-      const emailjsUserId = (window.ENV_CONFIG && window.ENV_CONFIG.emailjsUserId) || 'zRYVGu1o6DDmrdc4f';
-      emailjs.init(emailjsUserId);
+      (function () {
+        const c = window.ENV_CONFIG;
+        if (c && c.emailjsUserId) {
+          emailjs.init(c.emailjsUserId);
+        }
+      })();
   </script>
 
   <!-- Structured Data -->
@@ -72,7 +71,7 @@
     "@type": "Person",
     "name": "Irie Development",
     "description": "Independent iOS developer creating innovative apps for iPhone, iPad, and Apple Watch",
-    "url": "https://iriedevelopment.com",
+    "url": "https://irie-development.com",
     "sameAs": [
       "https://apps.apple.com/us/developer/irie-coffelt/id1228289281"
     ],
@@ -113,14 +112,15 @@
       </div>
     </div>
     <div class="button-group">
-      <a class="store-link apps" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank">📲 View All Apps on the App Store</a>
-      <button type="button" class="store-link shop" onclick="openStoreModal()">🛍️ Shop Arkansas Gear For The Family!</button>
+      <a class="store-link apps" href="https://apps.apple.com/us/developer/irie-coffelt/id1228289281" target="_blank" rel="noopener noreferrer">📲 View All Apps on the App Store</a>
+      <button type="button" class="store-link shop" id="storeModalOpenButton" aria-haspopup="dialog" aria-controls="storeModal" aria-expanded="false">🛍️ Shop Arkansas Gear For The Family!</button>
     </div>
 
     <!-- Newsletter Signup -->
     <div class="newsletter-section">
       <h3 class="newsletter-title">Stay Updated</h3>
       <p class="newsletter-subtitle">Get notified about new apps and exclusive Arkansas merch!</p>
+      <div class="newsletter-error" id="newsletterError" role="alert"></div>
       <form class="newsletter-form" id="newsletterForm">
         <input type="email" placeholder="Enter your email" required class="newsletter-input">
         <button type="submit" class="newsletter-btn">Subscribe</button>
@@ -128,11 +128,11 @@
     </div>
 
     <!-- Store Modal -->
-    <div id="storeModal" class="modal">
+    <div id="storeModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="storeModalTitle" aria-hidden="true">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>Arkansas Gear Store</h3>
-          <button type="button" class="close-btn" onclick="closeStoreModal()">&times;</button>
+          <h3 id="storeModalTitle">Arkansas Gear Store</h3>
+          <button type="button" class="close-btn" onclick="closeStoreModal()" aria-label="Close store">&times;</button>
         </div>
         <div class="modal-body">
           <iframe 
@@ -148,33 +148,71 @@
     <nav class="main-nav">
       <a href="pages/privacy_policies/privacy.html" class="store-link nav">Privacy Policies</a>
       <a href="pages/terms_of_service/terms.html" class="store-link nav">Terms of Use</a>
-      <a href="https://www.facebook.com/IrieDevelopment/?checkpoint_src=any" class="store-link nav" target="_blank" rel="noopener">Contact</a>
+      <a href="https://www.facebook.com/IrieDevelopment/?checkpoint_src=any" class="store-link nav" target="_blank" rel="noopener noreferrer">Contact</a>
     </nav>
   </div>
 
   <script>
-    // Store Modal Functions
+    let storeModalLastFocus = null;
+
     function openStoreModal() {
-      document.getElementById('storeModal').style.display = 'block';
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      const modal = document.getElementById('storeModal');
+      const openBtn = document.getElementById('storeModalOpenButton');
+      if (!modal) return;
+      storeModalLastFocus = document.activeElement;
+      modal.style.display = 'block';
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (openBtn) openBtn.setAttribute('aria-expanded', 'true');
+      const closeBtn = modal.querySelector('.close-btn');
+      if (closeBtn) closeBtn.focus();
     }
 
     function closeStoreModal() {
-      document.getElementById('storeModal').style.display = 'none';
-      document.body.style.overflow = 'auto'; // Restore scrolling
-    }
-
-    // Close modal when clicking outside
-    window.onclick = function(event) {
       const modal = document.getElementById('storeModal');
-      if (event.target === modal) {
-        closeStoreModal();
+      const openBtn = document.getElementById('storeModalOpenButton');
+      if (!modal) return;
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = 'auto';
+      if (openBtn) openBtn.setAttribute('aria-expanded', 'false');
+      if (storeModalLastFocus && typeof storeModalLastFocus.focus === 'function') {
+        try { storeModalLastFocus.focus(); } catch (e) { /* ignore */ }
       }
     }
 
-    // Close modal with Escape key
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') {
+    function showNewsletterError(msg) {
+      const el = document.getElementById('newsletterError');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('is-visible');
+    }
+
+    function clearNewsletterError() {
+      const el = document.getElementById('newsletterError');
+      if (!el) return;
+      el.textContent = '';
+      el.classList.remove('is-visible');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('storeModal');
+      const openBtn = document.getElementById('storeModalOpenButton');
+      if (openBtn) {
+        openBtn.addEventListener('click', function () { openStoreModal(); });
+      }
+      if (modal) {
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closeStoreModal();
+        });
+      }
+    });
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      const modal = document.getElementById('storeModal');
+      if (modal && modal.style.display === 'block') {
+        event.preventDefault();
         closeStoreModal();
       }
     });
@@ -189,9 +227,10 @@
           const emailInput = newsletterForm.querySelector('input[type="email"]');
           const submitButton = newsletterForm.querySelector('button[type="submit"]');
           const email = emailInput.value.trim();
+          clearNewsletterError();
           
           if (!email) {
-            alert('Please enter a valid email address');
+            showNewsletterError('Please enter a valid email address.');
             return;
           }
           
@@ -256,7 +295,7 @@
             
           } catch (error) {
             console.error('Subscription error:', error);
-            alert(error.message || 'Failed to subscribe. Please try again.');
+            showNewsletterError(error.message || 'Failed to subscribe. Please try again.');
             submitButton.disabled = false;
             submitButton.textContent = originalButtonText;
           }
@@ -329,6 +368,34 @@
       }
     }
 
+    function escapeHtml(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function safeAppStoreHref(u) {
+      try {
+        const parsed = new URL(String(u || '').trim());
+        if (parsed.protocol === 'https:' && (parsed.hostname === 'apps.apple.com' || parsed.hostname === 'itunes.apple.com' || parsed.hostname.endsWith('.itunes.apple.com'))) {
+          return parsed.href;
+        }
+      } catch (e) { /* */ }
+      return 'https://apps.apple.com/us/developer/irie-coffelt/id1228289281';
+    }
+
+    function safeImageSrc(u) {
+      try {
+        const p = new URL(String(u || '').trim());
+        if (p.protocol === 'https:') {
+          return p.href;
+        }
+      } catch (e) { /* */ }
+      return 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+    }
+
     // Get default apps (fallback)
     function getDefaultApps() {
       return [
@@ -361,17 +428,22 @@
 
     // Render apps to the container
     function renderApps(container, apps) {
-      container.innerHTML = apps.map((app, index) => `
-        <a class="app-card" href="${app.url}" target="_blank" data-index="${index}">
+      container.innerHTML = apps.map((app, index) => {
+        const href = safeAppStoreHref(app && app.url);
+        const src = safeImageSrc(app && app.icon);
+        const title = escapeHtml((app && app.title) != null ? app.title : '');
+        const desc = escapeHtml((app && app.description) != null ? app.description : '');
+        return `
+        <a class="app-card" href="${href}" target="_blank" rel="noopener noreferrer" data-index="${index}">
           <span class="app-icon-container">
-            <img src="${app.icon}" alt="${app.title} app icon" class="app-icon">
+            <img src="${src}" alt="${title} app icon" class="app-icon">
           </span>
           <span class="app-info">
-            <span class="app-title">${app.title}</span>
-            <span class="app-desc">${app.description}</span>
+            <span class="app-title">${title}</span>
+            <span class="app-desc">${desc}</span>
           </span>
-        </a>
-      `).join('');
+        </a>`;
+      }).join('');
     }
 
     // Load apps when page loads
