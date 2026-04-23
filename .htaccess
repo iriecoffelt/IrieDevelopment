@@ -25,6 +25,6 @@
     # Allow access only for GitHub OAuth redirects
     RewriteEngine On
     RewriteCond %{HTTP_REFERER} !^https://github\.com
-    RewriteCond %{HTTP_REFERER} !^https://iriedevelopment\.com
+    RewriteCond %{HTTP_REFERER} !^https://irie-development\.com
     RewriteRule .* - [F]
 </Files> 

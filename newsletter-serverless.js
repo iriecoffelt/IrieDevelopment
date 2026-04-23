@@ -14,11 +14,10 @@ class NewsletterManager {
     // Or: 'https://your-project.netlify.app/.netlify/functions'
     this.serverlessApiUrl = window.SERVERLESS_API_URL || 'https://irie-development.vercel.app/api';
     
-    // EmailJS configuration - can still use env-config.js or hardcoded fallbacks
     const envConfig = window.ENV_CONFIG || {};
-    this.serviceId = envConfig.emailjsServiceId || 'service_ju06a1p';
-    this.templateId = envConfig.emailjsTemplateId || 'template_925ze9i';
-    this.userId = envConfig.emailjsUserId || 'zRYVGu1o6DDmrdc4f';
+    this.serviceId = envConfig.emailjsServiceId || null;
+    this.templateId = envConfig.emailjsTemplateId || null;
+    this.userId = envConfig.emailjsUserId || null;
     
     // Note: JSONBin credentials are now stored server-side in your serverless functions
     // They are never exposed to the browser
@@ -29,16 +28,50 @@ class NewsletterManager {
                         window.location.pathname.includes('send_newsletter') ||
                         document.getElementById('admin-dashboard') !== null ||
                         document.querySelector('.admin-panel') !== null;
+    this._isAdminPage = isAdminPage;
     
     if (isAdminPage) {
       this.loadSubscribers();
     }
-    // Otherwise, subscribers will be loaded on-demand when needed
+  }
+
+  getOptionalAuthHeaders() {
+    const headers = { 'Accept': 'application/json' };
+    const k = (window.ENV_CONFIG && window.ENV_CONFIG.subscribersApiKey) || '';
+    if (k) {
+      headers['Authorization'] = `Bearer ${k}`;
+    }
+    return headers;
   }
 
   // Load subscribers from serverless API (secure)
   async loadSubscribers() {
     try {
+      // Quick check: use localStorage cache first for instant loading
+      const cachedSubscribers = localStorage.getItem('newsletter_subscribers');
+      if (cachedSubscribers) {
+        try {
+          const cached = JSON.parse(cachedSubscribers);
+          if (Array.isArray(cached) && cached.length > 0) {
+            this.subscribers = cached;
+            console.log('⚡ Loaded', cached.length, 'subscribers from cache (instant)');
+            // Still fetch fresh data in background, but don't block
+            this.fetchFromServerlessAPI().then(cloudData => {
+              if (cloudData && Array.isArray(cloudData.subscribers)) {
+                this.subscribers = cloudData.subscribers;
+                localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+                console.log('✅ Updated subscribers from API:', this.subscribers.length);
+              }
+            }).catch(() => {
+              // Silent fail - cache is good enough
+            });
+            return; // Return early with cached data
+          }
+        } catch (e) {
+          // Cache invalid, continue to API
+        }
+      }
+      
       console.log('Loading subscribers from serverless API...');
       
       // Fetch from serverless API
@@ -87,7 +120,7 @@ class NewsletterManager {
       const response = await fetch(`${this.serverlessApiUrl}/subscribers`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
+          ...this.getOptionalAuthHeaders(),
           'Content-Type': 'application/json'
         },
         cache: 'no-store'
@@ -123,6 +156,7 @@ class NewsletterManager {
       const response = await fetch(`${this.serverlessApiUrl}/subscribers-save`, {
         method: 'POST',
         headers: {
+          ...this.getOptionalAuthHeaders(),
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -169,49 +203,43 @@ class NewsletterManager {
     }
   }
 
-  // Add subscriber (uses serverless API)
+  // Add one subscriber via public POST /api/subscribers { email } (no full list in browser)
   async addSubscriber(email) {
     email = email.trim().toLowerCase();
-    console.log('📧 Adding subscriber:', email);
-    
     if (!this.isValidEmail(email)) {
       throw new Error('Invalid email address');
     }
-    
-    // Load subscribers if not already loaded (for homepage form submissions)
-    if (this.subscribers.length === 0) {
-      console.log('📥 Loading subscribers before adding...');
-      await this.loadSubscribers();
+
+    const response = await fetch(`${this.serverlessApiUrl}/subscribers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+      cache: 'no-store',
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(
+        (data && (data.message || data.error)) || 'Failed to subscribe. Please try again.'
+      );
     }
-    
-    if (this.subscribers.includes(email)) {
+    if (data.alreadySubscribed) {
       throw new Error('Email already subscribed');
     }
-    
-    console.log('➕ Adding email to subscribers array...');
-    this.subscribers.push(email);
-    console.log('📊 Total subscribers now:', this.subscribers.length);
-    localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
-    
-    // Save to serverless API
-    console.log('💾 Saving to serverless API...');
-    const saved = await this.saveToServerlessAPI(this.subscribers);
-    if (!saved) {
-      console.error('❌ Failed to save to serverless API');
-      throw new Error('Failed to save subscriber. Please try again.');
+
+    localStorage.removeItem('newsletter_subscribers');
+
+    this.sendWelcomeEmail(email).catch(() => {
+      // Subscriber is stored; welcome email is best-effort
+    });
+
+    if (this._isAdminPage) {
+      await this.loadSubscribers();
+    } else {
+      this.subscribers = [];
     }
-    console.log('✅ Successfully saved to serverless API');
-    
-    // Send welcome email via EmailJS
-    console.log('📨 Sending welcome email...');
-    try {
-      await this.sendWelcomeEmail(email);
-      console.log('✅ Welcome email sent');
-    } catch (emailError) {
-      console.warn('⚠️ Failed to send welcome email:', emailError);
-      // Don't throw - subscriber is already saved
-    }
-    
+
     return true;
   }
 
@@ -238,9 +266,10 @@ class NewsletterManager {
 
   // Send welcome email via EmailJS
   async sendWelcomeEmail(email) {
+    if (!this.serviceId || !this.templateId || !this.userId) {
+      return false;
+    }
     try {
-      // Use EmailJS SDK if available (preferred method)
-      // Fallback to direct API if SDK not loaded
       if (typeof emailjs !== 'undefined' && emailjs.send) {
         const templateParams = {
           from_email: email, // Used for "To Email" field (recipient)

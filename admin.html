@@ -5,7 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Dashboard - Irie Development</title>
     <meta name="description" content="Admin dashboard for Irie Development">
+    <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#007AFF">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         .admin-container {
@@ -1294,7 +1298,7 @@
             <button type="button" onclick="verifyGitHubToken()" class="admin-btn">Verify Token</button>
         </div>
         <div class="token-help">
-            <p><small>💡 Create a token at: <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings &gt; Developer settings &gt; Personal access tokens</a></small></p>
+            <p><small>💡 Create a token at: <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">GitHub Settings &gt; Developer settings &gt; Personal access tokens</a></small></p>
             <p><small>🔑 Token needs: <code>read:user</code> scope</small></p>
         </div>
     </div>
@@ -1552,7 +1556,7 @@
                             <input type="password" id="jsonbinAccessKey" class="settings-input" placeholder="Enter JSONBin Access Key">
                             <button type="button" class="settings-toggle-visibility" onclick="togglePasswordVisibility('jsonbinAccessKey', this)" title="Show/Hide">👁️</button>
                         </div>
-                        <small class="settings-help">Used for secure cloud storage access. Get it from <a href="https://jsonbin.io/app/account/api-keys" target="_blank">JSONBin.io</a></small>
+                        <small class="settings-help">Used for secure cloud storage access. Get it from <a href="https://jsonbin.io/app/account/api-keys" target="_blank" rel="noopener noreferrer">JSONBin.io</a></small>
                     </div>
 
                     <div class="settings-form-group">
@@ -1712,7 +1716,7 @@
 
                     <div class="settings-form-group">
                         <label for="seoOgImage" class="settings-label">Open Graph Image URL:</label>
-                        <input type="url" id="seoOgImage" class="settings-input" placeholder="https://iriedevelopment.com/og-image.jpg">
+                        <input type="url" id="seoOgImage" class="settings-input" placeholder="https://irie-development.com/og-image.jpg">
                         <small class="settings-help">Image shown when sharing (1200x630px recommended)</small>
                     </div>
 
@@ -2602,7 +2606,7 @@
                         <div class="app-item-info">
                             <div class="app-item-title">${app.title}</div>
                             <div class="app-item-desc">${app.description}</div>
-                            <a href="${app.url}" target="_blank" class="app-item-link">View on App Store →</a>
+                            <a href="${app.url}" target="_blank" rel="noopener noreferrer" class="app-item-link">View on App Store →</a>
                         </div>
                     </div>
                     <div class="subscriber-actions">
@@ -3229,7 +3233,7 @@
             const url = URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `iriedevelopment-settings-${new Date().toISOString().split('T')[0]}.json`;
+            link.download = `irie-development-settings-${new Date().toISOString().split('T')[0]}.json`;
             link.click();
             URL.revokeObjectURL(url);
 
@@ -3350,7 +3354,7 @@
             document.getElementById('seoKeywords').value = localStorage.getItem('seo_keywords') || 'iOS developer, iPhone apps, iPad apps, Apple Watch apps, Arkansas apps, Sudoku Mindscape, Hidden Secrets of Arkansas, mobile app development, iOS programming';
             document.getElementById('seoOgTitle').value = localStorage.getItem('seo_og_title') || 'Irie Development | iOS App Developer & Arkansas Apps';
             document.getElementById('seoOgDescription').value = localStorage.getItem('seo_og_description') || 'Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!';
-            document.getElementById('seoOgImage').value = localStorage.getItem('seo_og_image') || 'https://iriedevelopment.com/og-image.jpg';
+            document.getElementById('seoOgImage').value = localStorage.getItem('seo_og_image') || 'https://irie-development.com/og-image.jpg';
             document.getElementById('seoTwitterTitle').value = localStorage.getItem('seo_twitter_title') || 'Irie Development | iOS App Developer & Arkansas Apps';
             document.getElementById('seoTwitterDescription').value = localStorage.getItem('seo_twitter_description') || 'Innovative iOS apps for iPhone, iPad, and Apple Watch. Discover Sudoku Mindscape, Hidden Secrets of Arkansas, and more!';
 
