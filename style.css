@@ -1,5 +1,5 @@
 /* Modern iOS-inspired design with cool visuals */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* Inter is loaded in each page via <link>; do not @import (blocks rendering). */
 
 /* Utility classes for common spacing and styling */
 .margin-top-large {
@@ -508,16 +508,6 @@ body.light-theme .app-card:hover .app-icon:not(img) {
   transform: translateY(-2px);
 }
 
-.admin-link {
-  background: linear-gradient(135deg, #FF9500 0%, #FF2D92 100%);
-  color: white;
-  font-weight: 600;
-}
-
-.admin-link:hover {
-  background: linear-gradient(135deg, #FF8000 0%, #FF1A80 100%);
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
   .container {
@@ -823,6 +813,23 @@ body.light-theme .app-card:hover .app-icon:not(img) {
   font-size: 1em;
   margin-bottom: 2rem;
   font-weight: 400;
+}
+
+.newsletter-error {
+  display: none;
+  max-width: 400px;
+  margin: 0 auto 1rem;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #f5c6cb;
+  background: #f8d7da;
+  color: #721c24;
+  font-size: 0.95em;
+  text-align: left;
+}
+
+.newsletter-error.is-visible {
+  display: block;
 }
 
 .newsletter-form {

@@ -2,11 +2,12 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://iriedevelopment.com/sitemap.xml
+Sitemap: https://irie-development.com/sitemap.xml
 
 # Crawl delay (optional - be respectful to servers)
 Crawl-delay: 1
 
 # Disallow admin areas (if any)
 Disallow: /admin/
-Disallow: /private/ 
+Disallow: /admin.html
+Disallow: /private/

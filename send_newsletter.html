@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Send Newsletter - Irie Development</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -488,7 +491,7 @@
                 <button type="button" onclick="verifyGitHubToken()" class="admin-btn">Verify Token</button>
             </div>
             <div class="token-help">
-                <p><small>💡 Create a token at: <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings &gt; Developer settings &gt; Personal access tokens</a></small></p>
+                <p><small>💡 Create a token at: <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">GitHub Settings &gt; Developer settings &gt; Personal access tokens</a></small></p>
                 <p><small>🔑 Token needs: <code>read:user</code> scope</small></p>
             </div>
         </div>
@@ -545,18 +548,19 @@
         </div>
     </div>
 
-    <!-- Serverless API Configuration -->
+    <!-- Serverless API + env (CI deploys env-config.js) -->
+    <script src="env-config.js"></script>
     <script>
       window.SERVERLESS_API_URL = 'https://irie-development.vercel.app/api';
     </script>
     <script src="newsletter-serverless.js"></script>
     <script>
-        // EmailJS configuration
+        const env = window.ENV_CONFIG || {};
         const EMAILJS_CONFIG = {
-            serviceId: 'service_ju06a1p',
-            templateId: 'template_925ze9i', // Current template for signup notifications
-            newsletterTemplateId: 'template_nbpsdhd', // Newsletter template
-            userId: 'zRYVGu1o6DDmrdc4f'
+            serviceId: env.emailjsServiceId || null,
+            templateId: env.emailjsTemplateId || null,
+            newsletterTemplateId: 'template_nbpsdhd',
+            userId: env.emailjsUserId || null
         };
 
         // Update subscriber count
@@ -772,13 +776,18 @@ Irie Development`
             const templateId = EMAILJS_CONFIG.newsletterTemplateId || EMAILJS_CONFIG.templateId;
             console.log('Using template ID:', templateId);
             console.log('EmailJS config:', EMAILJS_CONFIG);
+
+            if (!EMAILJS_CONFIG.serviceId || !EMAILJS_CONFIG.userId || !templateId) {
+                showStatus('error', 'EmailJS is not configured. Ensure env-config.js is deployed (GitHub Action) with EmailJS credentials.');
+                return;
+            }
             
             for (const email of subscribers) {
                 console.log(`Attempting to send to: ${email}`);
                 try {
                     const emailParams = {
                         to_email: email,
-                        from_email: 'newsletter@iriedevelopment.com',
+                        from_email: 'newsletter@irie-development.com',
                         subject: subject,
                         message: message,
                         from_name: 'Irie Development Newsletter System'
@@ -1004,7 +1013,12 @@ Irie Development`
     <!-- EmailJS SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        emailjs.init('zRYVGu1o6DDmrdc4f');
+        (function () {
+            const c = window.ENV_CONFIG;
+            if (c && c.emailjsUserId) {
+                emailjs.init(c.emailjsUserId);
+            }
+        })();
     </script>
 </body>
 </html> 

@@ -1,5 +1,3 @@
-# Environment config files (generated during deployment)
-
 # Vercel
 .vercel
 .env*.local

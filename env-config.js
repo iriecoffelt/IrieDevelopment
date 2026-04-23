@@ -5,5 +5,6 @@
 window.ENV_CONFIG = {
   emailjsUserId: 'zRYVGu1o6DDmrdc4f',
   emailjsServiceId: 'service_ju06a1p',
-  emailjsTemplateId: 'template_925ze9i'
+  emailjsTemplateId: 'template_925ze9i',
+  subscribersApiKey: ''
 };
