@@ -39,6 +39,31 @@ class NewsletterManager {
   // Load subscribers from serverless API (secure)
   async loadSubscribers() {
     try {
+      // Quick check: use localStorage cache first for instant loading
+      const cachedSubscribers = localStorage.getItem('newsletter_subscribers');
+      if (cachedSubscribers) {
+        try {
+          const cached = JSON.parse(cachedSubscribers);
+          if (Array.isArray(cached) && cached.length > 0) {
+            this.subscribers = cached;
+            console.log('⚡ Loaded', cached.length, 'subscribers from cache (instant)');
+            // Still fetch fresh data in background, but don't block
+            this.fetchFromServerlessAPI().then(cloudData => {
+              if (cloudData && Array.isArray(cloudData.subscribers)) {
+                this.subscribers = cloudData.subscribers;
+                localStorage.setItem('newsletter_subscribers', JSON.stringify(this.subscribers));
+                console.log('✅ Updated subscribers from API:', this.subscribers.length);
+              }
+            }).catch(() => {
+              // Silent fail - cache is good enough
+            });
+            return; // Return early with cached data
+          }
+        } catch (e) {
+          // Cache invalid, continue to API
+        }
+      }
+      
       console.log('Loading subscribers from serverless API...');
       
       // Fetch from serverless API
@@ -178,12 +203,27 @@ class NewsletterManager {
       throw new Error('Invalid email address');
     }
     
+    // Quick duplicate check using localStorage cache first (much faster)
+    const cachedSubscribers = localStorage.getItem('newsletter_subscribers');
+    if (cachedSubscribers) {
+      try {
+        const cached = JSON.parse(cachedSubscribers);
+        if (Array.isArray(cached) && cached.includes(email)) {
+          throw new Error('Email already subscribed');
+        }
+      } catch (e) {
+        // If cache is invalid, continue to load from API
+      }
+    }
+    
     // Load subscribers if not already loaded (for homepage form submissions)
+    // Only do full API load if we don't have subscribers in memory
     if (this.subscribers.length === 0) {
       console.log('📥 Loading subscribers before adding...');
       await this.loadSubscribers();
     }
     
+    // Final duplicate check with fresh data
     if (this.subscribers.includes(email)) {
       throw new Error('Email already subscribed');
     }
@@ -202,15 +242,13 @@ class NewsletterManager {
     }
     console.log('✅ Successfully saved to serverless API');
     
-    // Send welcome email via EmailJS
-    console.log('📨 Sending welcome email...');
-    try {
-      await this.sendWelcomeEmail(email);
-      console.log('✅ Welcome email sent');
-    } catch (emailError) {
+    // Send welcome email asynchronously (don't wait for it - improves perceived performance)
+    // This allows the UI to show success immediately while email sends in background
+    console.log('📨 Sending welcome email (async)...');
+    this.sendWelcomeEmail(email).catch(emailError => {
       console.warn('⚠️ Failed to send welcome email:', emailError);
-      // Don't throw - subscriber is already saved
-    }
+      // Don't throw - subscriber is already saved, email failure is non-critical
+    });
     
     return true;
   }
