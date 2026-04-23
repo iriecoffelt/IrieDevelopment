@@ -5,6 +5,6 @@ window.ENV_CONFIG = {
   emailjsUserId: 'zRYVGu1o6DDmrdc4f',
   emailjsServiceId: 'service_ju06a1p',
   emailjsTemplateId: 'template_925ze9i',
-  // Optional: set the same value as Vercel SUBSCRIBERS_API_KEY so admin can GET/POST /subscribers* when the API requires Bearer auth
+  // Optional: Set the same value as Vercel SUBSCRIBERS_API_KEY so admin can GET/POST /subscribers* when the API requires Bearer auth
   subscribersApiKey: '',
 };
