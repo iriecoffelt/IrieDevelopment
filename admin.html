@@ -3471,6 +3471,8 @@
             checkGitHubAuth();
         });
     </script>
+    <!-- Public IDs + subscribersApiKey (CI overwrites on deploy; see env-config.js in repo) -->
+    <script src="env-config.js"></script>
     <!-- Serverless API Configuration -->
     <script>
       window.SERVERLESS_API_URL = 'https://irie-development.vercel.app/api';
