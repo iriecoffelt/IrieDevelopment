@@ -119,6 +119,16 @@ body.light-theme .store-link.nav:hover {
   font-size: 32px;
 }
 
+.app-icon-enigma {
+  background: linear-gradient(135deg, #2C1B4E 0%, #5E4B8B 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  font-size: 32px;
+}
+
 .app-icon-whiteboard {
   background: linear-gradient(135deg, #5856D6 0%, #007AFF 100%);
   display: flex;
